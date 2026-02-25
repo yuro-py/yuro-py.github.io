@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc">
+  <title id="title">Sample Writing Banner</title>
+  <desc id="desc">Abstract line pattern with labels for article workflow.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f1118"/>
+      <stop offset="100%" stop-color="#1e2638"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="560" fill="url(#bg)"/>
+  <g fill="none" stroke="#8ea4ff" stroke-width="2" opacity="0.7">
+    <path d="M70 470 C220 350, 350 500, 500 380 S790 420, 950 290 S1120 360, 1170 240"/>
+    <path d="M30 400 C210 300, 350 430, 520 320 S820 360, 980 250 S1100 290, 1180 190" opacity="0.45"/>
+  </g>
+  <g fill="#e7edff" font-family="Menlo, monospace">
+    <text x="86" y="120" font-size="42">Sample writing 2</text>
+    <text x="86" y="168" font-size="22" opacity="0.85">Single-file article workflow demo</text>
+  </g>
+  <g>
+    <rect x="86" y="220" width="320" height="68" rx="10" fill="#111827" stroke="#8ea4ff"/>
+    <rect x="442" y="220" width="320" height="68" rx="10" fill="#111827" stroke="#8ea4ff"/>
+    <rect x="798" y="220" width="320" height="68" rx="10" fill="#111827" stroke="#8ea4ff"/>
+    <text x="118" y="262" fill="#dfe7ff" font-family="Menlo, monospace" font-size="20">Write once</text>
+    <text x="474" y="262" fill="#dfe7ff" font-family="Menlo, monospace" font-size="20">Render auto</text>
+    <text x="830" y="262" fill="#dfe7ff" font-family="Menlo, monospace" font-size="20">Publish fast</text>
+  </g>
+</svg>

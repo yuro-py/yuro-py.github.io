@@ -1,0 +1,4 @@
+Sample writing 2 resource file
+
+Use this file to attach extra notes or references from an article.
+This demonstrates local file linking from article content.
