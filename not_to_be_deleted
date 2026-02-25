@@ -1,0 +1,6 @@
+writing syntax in `content`:
+- `## Heading`
+- normal paragraphs
+- `- bullet list`
+- `[link text](url)`
+- code blocks with triple backticks
