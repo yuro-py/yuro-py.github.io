@@ -23,6 +23,15 @@ Attention(Q, K, V) = softmax(QK^T / sqrt(d_k))V
 ## Reference
 Read the original paper: [Attention Is All You Need](https://arxiv.org/abs/1706.03762).`,
     },
+    {
+      id: "sample-tech-two",
+      date: "2026-FEB-26",
+      title: "Sample tech article 2",
+      summary:
+        "Added another sample tech article to see changes in the live site.",
+      content: `## Heading
+I am bored`,
+    },
   ],
   writings: [
     {
