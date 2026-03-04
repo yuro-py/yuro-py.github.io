@@ -1,5 +1,5 @@
 function getArticleStore() {
-  return window.ARTICLE_CONTENT || { tech: [], writings: [] };
+  return window.CONTENT_INDEX || { projects: [], tech: [], writings: [] };
 }
 
 function escapeHtml(text) {
@@ -297,7 +297,12 @@ function renderArticlePage() {
     return;
   }
 
-  const sectionLabel = section === "tech" ? "tech" : "writings";
+  const sectionLabel =
+    section === "projects"
+      ? "projects"
+      : section === "tech"
+        ? "tech"
+        : "writings";
   document.title = `${article.title} | yuro`;
   titleEl.textContent = article.title;
   metaEl.textContent = `${sectionLabel} ・ ${article.date}`;
@@ -321,6 +326,7 @@ function bindBackToTop() {
 
 document.addEventListener("DOMContentLoaded", function () {
   bindBackToTop();
+  renderArticleList("projects", "projects-list");
   renderArticleList("tech", "tech-list");
   renderArticleList("writings", "writings-list");
   renderArticlePage();

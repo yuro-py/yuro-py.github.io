@@ -6,11 +6,15 @@
         <title>Portfolio</title>
         <link rel="stylesheet" href="styles.css" />
         <link rel="icon" href="favicon.ico" sizes="any" />
-        <link rel="icon" type="image/png" sizes="512x512" href="assets/icons/icon-512.png" />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="512x512"
+            href="assets/icons/icon-512.png"
+        />
         <link rel="apple-touch-icon" href="assets/icons/icon-512.png" />
         <link rel="manifest" href="site.webmanifest" />
         <meta name="theme-color" content="#000000" />
-
     </head>
     <body>
         <div id="top"></div>
@@ -141,26 +145,10 @@
 
                 <section id="projects">
                     <h2 class="section-title">projects</h2>
-                    <ul class="list">
-                        <li class="list-item">
-                            <span class="datetime">2026-FEB-25</span>
-                            <a
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                href="https://github.com/yuro-py/pytorch-basics"
-                                >PyTorch Basics</a
-                            >
-                        </li>
-                        <li class="list-item">
-                            <span class="datetime">2026-JAN-10</span>
-                            <a
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                href="https://github.com/yuro-py/karpathy-series"
-                                >Karpathy Series</a
-                            >
-                        </li>
-                    </ul>
+                    <ul id="projects-list" class="list"></ul>
+                    <noscript>
+                        <p>Enable JavaScript to load project entries.</p>
+                    </noscript>
                 </section>
 
                 <section id="tech">
@@ -203,7 +191,7 @@
             </div>
         </footer>
 
-        <script src="articles-content.js"></script>
+        <script src="content-index.js"></script>
         <script src="script.js"></script>
     </body>
 </html>

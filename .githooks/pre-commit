@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+node scripts/build-content-index.js
+
+git add content-index.js
