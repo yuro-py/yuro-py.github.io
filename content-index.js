@@ -21,14 +21,6 @@ window.CONTENT_INDEX = {
   ],
   "tech": [
     {
-      "id": "2026-feb-27-sample_tech_article_2",
-      "date": "2026-FEB-27",
-      "title": "sample tech article 2",
-      "summary": "Heading",
-      "content": "## Heading\nI am bored.",
-      "sourceFile": "content/tech/2026-FEB-27_sample_tech_article_2.md"
-    },
-    {
       "id": "2026-feb-26-sample_tech_article_1",
       "date": "2026-FEB-26",
       "title": "sample tech article 1",
