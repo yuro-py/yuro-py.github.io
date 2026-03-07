@@ -112,20 +112,18 @@ function buildEntries(sectionName) {
         title: formatLabel(stem),
         summary: summaryLine.replace(/^#+\s*/, "").trim(),
         content,
-        sourceFile: `content/${sectionName}/${fileName}`,
+        fileName,
         sortKey: parseDateToEpoch(date),
       };
     })
     .sort(
-      (a, b) =>
-        b.sortKey - a.sortKey || b.sourceFile.localeCompare(a.sourceFile),
+      (a, b) => b.sortKey - a.sortKey || b.fileName.localeCompare(a.fileName),
     )
-    .map(({ sortKey, ...entry }) => entry);
+    .map(({ fileName, sortKey, ...entry }) => entry);
 }
 
 function buildIndex() {
   const sections = listSectionDirectories().map((section) => ({
-    name: section.name,
     slug: section.slug,
     label: section.label,
     entries: buildEntries(section.name),
