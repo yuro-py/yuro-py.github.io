@@ -1,5 +1,15 @@
-function getArticleStore() {
-  return window.CONTENT_INDEX || { projects: [], tech: [], writings: [] };
+function getContentIndex() {
+  return window.CONTENT_INDEX || { sections: [] };
+}
+
+function getSections() {
+  return getContentIndex().sections || [];
+}
+
+function findSectionBySlug(slug) {
+  return getSections().find(function (section) {
+    return section.slug === slug;
+  });
 }
 
 function escapeHtml(text) {
@@ -189,80 +199,61 @@ function markdownToHtml(markdown) {
   return html.join("\n");
 }
 
-function sortByDateDesc(items) {
-  const monthMap = {
-    JAN: 0,
-    FEB: 1,
-    MAR: 2,
-    APR: 3,
-    MAY: 4,
-    JUN: 5,
-    JUL: 6,
-    AUG: 7,
-    SEP: 8,
-    OCT: 9,
-    NOV: 10,
-    DEC: 11,
-  };
-
-  function parseArticleDate(value) {
-    const text = String(value || "").trim();
-    const custom = text.match(/^(\d{4})-([A-Za-z]{3})-(\d{1,2})$/);
-    if (custom) {
-      const year = Number(custom[1]);
-      const month = monthMap[custom[2].toUpperCase()];
-      const day = Number(custom[3]);
-      if (Number.isInteger(month)) {
-        return Date.UTC(year, month, day);
-      }
-    }
-
-    const parsed = Date.parse(text);
-    return Number.isNaN(parsed) ? 0 : parsed;
-  }
-
-  return [...items].sort(function (a, b) {
-    return parseArticleDate(b.date) - parseArticleDate(a.date);
-  });
-}
-
-function buildArticleUrl(section, id) {
-  const params = new URLSearchParams({ section: section, id: id });
+function buildArticleUrl(sectionSlug, articleId) {
+  const params = new URLSearchParams({ section: sectionSlug, id: articleId });
   return `article.html?${params.toString()}`;
 }
 
-function renderArticleList(section, listId) {
-  const list = document.getElementById(listId);
-  if (!list) return;
+function buildSectionElement(section) {
+  const sectionEl = document.createElement("section");
+  sectionEl.id = section.slug;
 
-  const store = getArticleStore();
-  const items = sortByDateDesc(store[section] || []);
-  list.innerHTML = "";
+  const heading = document.createElement("h2");
+  heading.className = "section-title";
+  heading.textContent = section.label;
+  sectionEl.appendChild(heading);
 
-  if (!items.length) {
+  const list = document.createElement("ul");
+  list.className = "list";
+
+  if (!section.entries.length) {
     const li = document.createElement("li");
     li.className = "list-item";
     li.textContent = "No articles yet.";
     list.appendChild(li);
-    return;
+  } else {
+    section.entries.forEach(function (entry) {
+      const li = document.createElement("li");
+      li.className = "list-item";
+
+      const date = document.createElement("span");
+      date.className = "datetime";
+      date.textContent = entry.date;
+
+      const link = document.createElement("a");
+      link.href = buildArticleUrl(section.slug, entry.id);
+      link.textContent = entry.title;
+      link.setAttribute("aria-label", entry.title);
+
+      li.appendChild(date);
+      li.appendChild(link);
+      list.appendChild(li);
+    });
   }
 
-  items.forEach(function (item) {
-    const li = document.createElement("li");
-    li.className = "list-item";
+  sectionEl.appendChild(list);
+  return sectionEl;
+}
 
-    const date = document.createElement("span");
-    date.className = "datetime";
-    date.textContent = item.date;
+function renderHomepageSections() {
+  const container = document.getElementById("content-sections");
+  if (!container) return;
 
-    const link = document.createElement("a");
-    link.href = buildArticleUrl(section, item.id);
-    link.textContent = item.title;
-    link.setAttribute("aria-label", item.title);
+  const sections = getSections();
+  container.innerHTML = "";
 
-    li.appendChild(date);
-    li.appendChild(link);
-    list.appendChild(li);
+  sections.forEach(function (section) {
+    container.appendChild(buildSectionElement(section));
   });
 }
 
@@ -277,16 +268,16 @@ function renderArticlePage() {
   const backLink = document.getElementById("article-back-link");
 
   const params = new URLSearchParams(window.location.search);
-  const section = params.get("section");
-  const id = params.get("id");
+  const sectionSlug = params.get("section");
+  const articleId = params.get("id");
+  const section = findSectionBySlug(sectionSlug);
+  const article = section
+    ? section.entries.find(function (entry) {
+        return entry.id === articleId;
+      })
+    : null;
 
-  const store = getArticleStore();
-  const sectionItems = store[section] || [];
-  const article = sectionItems.find(function (item) {
-    return item.id === id;
-  });
-
-  if (!article) {
+  if (!section || !article) {
     document.title = "Article not found";
     titleEl.textContent = "Article not found";
     metaEl.textContent = "The requested article does not exist.";
@@ -297,26 +288,20 @@ function renderArticlePage() {
     return;
   }
 
-  const sectionLabel =
-    section === "projects"
-      ? "projects"
-      : section === "tech"
-        ? "tech"
-        : "writings";
   document.title = `${article.title} | yuro`;
   titleEl.textContent = article.title;
-  metaEl.textContent = `${sectionLabel} ・ ${article.date}`;
+  metaEl.textContent = `${section.label} ・ ${article.date}`;
   summaryEl.textContent = article.summary || "";
   contentEl.innerHTML = markdownToHtml(article.content || "");
-  backLink.href = `index.html#${section}`;
+  backLink.href = `index.html#${section.slug}`;
 }
 
 function bindBackToTop() {
   const backToTopBtn = document.getElementById("back-to-top");
   if (!backToTopBtn) return;
 
-  backToTopBtn.addEventListener("click", function (e) {
-    e.preventDefault();
+  backToTopBtn.addEventListener("click", function (event) {
+    event.preventDefault();
     window.scrollTo({
       top: 0,
       behavior: "smooth",
@@ -326,8 +311,6 @@ function bindBackToTop() {
 
 document.addEventListener("DOMContentLoaded", function () {
   bindBackToTop();
-  renderArticleList("projects", "projects-list");
-  renderArticleList("tech", "tech-list");
-  renderArticleList("writings", "writings-list");
+  renderHomepageSections();
   renderArticlePage();
 });
