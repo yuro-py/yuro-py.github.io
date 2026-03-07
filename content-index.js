@@ -31,14 +31,6 @@ window.CONTENT_INDEX = {
   ],
   "writings": [
     {
-      "id": "2026-mar-26-sample_writing_2",
-      "date": "2026-MAR-26",
-      "title": "sample writing 2",
-      "summary": "Intro",
-      "content": "## Intro\nI split work into focused blocks and avoid context switching during each block.\n\n## Default routine\n- Two 90-minute deep-work blocks.\n- One block for paper reading.\n- One block for implementation.\n- A short daily review with next-day planning.\n\n## Principle\nConsistency compounds faster than intense but irregular effort.\n\nUseful read: [Deep Work by Cal Newport](https://www.calnewport.com/books/deep-work/).",
-      "sourceFile": "content/writings/2026-MAR-26_sample_writing_2.md"
-    },
-    {
       "id": "2026-mar-25-sample_writing_1",
       "date": "2026-MAR-25",
       "title": "sample writing 1",
