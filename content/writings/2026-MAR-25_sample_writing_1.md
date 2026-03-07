@@ -9,11 +9,11 @@ This is a demo post that shows everything you can do in one article entry.
 - Use inline code like `window.CONTENT_INDEX`.
 
 ### Ordered workflow
-1. Open desired section folder.
+1. Create or open any folder inside `content/`.
 2. Add file as `YYYY-MON-DD_name_here.md`.
 3. Commit; the generated index updates the site list.
 
-> You only edit markdown files to publish now.
+> A new folder becomes a new live section automatically.
 
 ---
 
