@@ -26,6 +26,28 @@ function formatLabel(value) {
   return value.replace(/_/g, " ").trim();
 }
 
+function parseSectionDirectoryName(rawName) {
+  const match = rawName.match(/^(\d+)(?:[-_\s]*)?(.*)$/);
+  if (!match) {
+    return {
+      name: rawName,
+      label: formatLabel(rawName),
+      slug: slugify(rawName),
+      order: Number.POSITIVE_INFINITY,
+    };
+  }
+
+  const order = Number(match[1]);
+  const strippedName = match[2].trim() || rawName;
+
+  return {
+    name: rawName,
+    label: formatLabel(strippedName),
+    slug: slugify(strippedName),
+    order,
+  };
+}
+
 function slugify(value) {
   return value
     .trim()
@@ -56,10 +78,10 @@ function listSectionDirectories() {
   return fs
     .readdirSync(CONTENT_ROOT, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
-    .map((entry) => entry.name)
-    .filter((name) => !name.startsWith("."))
-    .filter((name) => !name.endsWith("BKP"))
-    .sort((a, b) => a.localeCompare(b));
+    .map((entry) => parseSectionDirectoryName(entry.name))
+    .filter((section) => !section.name.startsWith("."))
+    .filter((section) => !section.name.endsWith("BKP"))
+    .sort((a, b) => a.order - b.order || a.label.localeCompare(b.label));
 }
 
 function buildEntries(sectionName) {
@@ -74,14 +96,15 @@ function buildEntries(sectionName) {
       const match = fileName.match(NAME_PATTERN);
       if (!match) {
         throw new Error(
-          `Invalid filename in ${sectionName}: ${fileName} (expected YYYY-MON-DD_name.md)`
+          `Invalid filename in ${sectionName}: ${fileName} (expected YYYY-MON-DD_name.md)`,
         );
       }
 
       const date = `${match[1]}-${match[2]}-${match[3]}`;
       const stem = match[4];
       const content = fs.readFileSync(path.join(dir, fileName), "utf8").trim();
-      const summaryLine = content.split(/\r?\n/).find((line) => line.trim()) || "";
+      const summaryLine =
+        content.split(/\r?\n/).find((line) => line.trim()) || "";
 
       return {
         id: `${date}-${stem}`.toLowerCase(),
@@ -95,17 +118,17 @@ function buildEntries(sectionName) {
     })
     .sort(
       (a, b) =>
-        b.sortKey - a.sortKey || b.sourceFile.localeCompare(a.sourceFile)
+        b.sortKey - a.sortKey || b.sourceFile.localeCompare(a.sourceFile),
     )
     .map(({ sortKey, ...entry }) => entry);
 }
 
 function buildIndex() {
-  const sections = listSectionDirectories().map((sectionName) => ({
-    name: sectionName,
-    slug: slugify(sectionName),
-    label: formatLabel(sectionName),
-    entries: buildEntries(sectionName),
+  const sections = listSectionDirectories().map((section) => ({
+    name: section.name,
+    slug: section.slug,
+    label: section.label,
+    entries: buildEntries(section.name),
   }));
 
   const payload = [
