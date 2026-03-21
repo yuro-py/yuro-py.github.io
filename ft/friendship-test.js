@@ -251,7 +251,7 @@ document.addEventListener("DOMContentLoaded", function () {
       <div class="ft-result">
         <p>${
           score >= 90
-            ? "High compatibility. This is a strong personality match. Reach out on X if you want!"
+            ? "High compatibility. Reach out on X if you want!"
             : "Heavily incompatible. Not a match."
         }</p>
       </div>
