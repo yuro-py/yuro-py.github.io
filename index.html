@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Portfolio</title>
         <link rel="stylesheet" href="styles.css" />
+        <link rel="stylesheet" href="ft/friendship-test.css" />
         <link rel="icon" href="favicon.ico" sizes="any" />
         <link
             rel="icon"
@@ -163,6 +164,17 @@
                 <nav>
                     <ul>
                         <li>
+                            <button
+                                type="button"
+                                class="footer-link-button"
+                                id="friendship-test-open"
+                                aria-haspopup="dialog"
+                                aria-controls="friendship-test-modal"
+                            >
+                                friendship test
+                            </button>
+                        </li>
+                        <li>
                             <a href="#top" id="back-to-top"
                                 >back to top &uarr;</a
                             >
@@ -174,5 +186,38 @@
 
         <script src="content-index.js?v=20260307"></script>
         <script src="script.js?v=20260307"></script>
+        <script src="ft/friendship-test.js"></script>
+
+        <div
+            id="friendship-test-modal"
+            class="ft-modal"
+            hidden
+            aria-hidden="true"
+        >
+            <div class="ft-shell" role="dialog" aria-modal="true">
+                <button
+                    type="button"
+                    class="ft-close"
+                    id="friendship-test-close"
+                    aria-label="Close Friendship Test"
+                >
+                    close
+                </button>
+                <div class="ft-panel">
+                    <div class="ft-progress" aria-hidden="true">
+                        <span id="friendship-test-progress"></span>
+                    </div>
+                    <div class="ft-stage" id="friendship-test-stage"></div>
+                    <button
+                        type="button"
+                        class="ft-next"
+                        id="friendship-test-next"
+                        hidden
+                    >
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

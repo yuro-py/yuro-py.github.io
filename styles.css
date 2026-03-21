@@ -39,6 +39,10 @@ body {
 
 .navbar {
     padding: 24px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
 }
 
 .logo {
@@ -200,13 +204,32 @@ a:hover {
     text-decoration-color: white;
 }
 
+.footer-link-button {
+    margin-right: 15px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-decoration-color: rgb(209, 209, 209);
+    text-decoration-thickness: 1px;
+    text-decoration-skip-ink: none;
+    text-underline-offset: 4px;
+    cursor: pointer;
+}
+
+.footer-link-button:hover {
+    text-decoration-color: white;
+}
+
 @media (prefers-color-scheme: light) {
     a {
         color: #333;
         text-decoration-color: rgb(165, 165, 165);
     }
 
-    a:hover {
+    a:hover,
+    .footer-link-button:hover {
         text-decoration-color: black;
     }
 }
