@@ -7,6 +7,13 @@ window.CONTENT_INDEX = {
       "label": "projects",
       "entries": [
         {
+          "id": "2026-mar-20-trm_paper_implementation",
+          "date": "2026-MAR-20",
+          "title": "TRM paper implementation",
+          "summary": "Overview",
+          "content": "## Overview\nImplementation of \"Less is More: Recursive Reasoning with Tiny Networks\" paper with custom mini-uses.\n\n## Links\n- Repo: [TRM_impl](https://github.com/yuro-py/TRM_impl)"
+        },
+        {
           "id": "2026-feb-25-pytorch_basics",
           "date": "2026-FEB-25",
           "title": "pytorch basics",
