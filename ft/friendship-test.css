@@ -76,6 +76,9 @@
 
 .ft-kicker {
     margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
     color: #c1c1c1;
 }
 

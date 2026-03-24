@@ -51,10 +51,13 @@ body {
     justify-content: center;
     font-weight: 700;
     font-size: 16px;
+    font-family: inherit;
     text-decoration: none;
     border: 1px solid;
     padding: 8px 8px;
+    background: transparent;
     color: white;
+    cursor: pointer;
 }
 
 @media (prefers-color-scheme: light) {

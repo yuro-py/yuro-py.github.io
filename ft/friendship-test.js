@@ -222,7 +222,7 @@ document.addEventListener("DOMContentLoaded", function () {
     nextButton.hidden = true;
     stage.innerHTML = `
       <div class="ft-question-wrap">
-        <p class="ft-kicker">Friendship Test</p>
+        <p class="ft-kicker">VIBE CHECK</p>
         <h2 class="ft-question">Before you start</h2>
         <div class="ft-options">
           <div class="ft-note-card">
