@@ -291,7 +291,9 @@ function renderArticlePage() {
   document.title = `${article.title} | yuro`;
   titleEl.textContent = article.title;
   metaEl.textContent = `${section.label} ・ ${article.date}`;
-  summaryEl.textContent = article.summary || "";
+  summaryEl.hidden = section.slug === "projects";
+  summaryEl.textContent =
+    section.slug === "projects" ? "" : article.summary || "";
   contentEl.innerHTML = markdownToHtml(article.content || "");
   backLink.href = `index.html#${section.slug}`;
 }
