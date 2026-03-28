@@ -1,7 +1,5 @@
 # TRM Implementation Article:-
 
-Link → https://moazharu.medium.com/building-tiny-recursive-model-from-scratch-when-tiny-networks-beat-giants-at-their-own-game-68d9df9e1fdb
-
 ---
 
 If you were a traditional LLM, this is how you would solve a sudoku puzzle:-
@@ -45,8 +43,8 @@ These three interact with each other through transformer layers.
 
 ***TRM architecture:-***
 
-![image.png](files/image.png)
+![image.jpg](files/image.jpg)
 
 ***Benchmark results:-***
 
-![image1.png](files/image1.png)
+![image1.jpg](files/image1.jpg)
