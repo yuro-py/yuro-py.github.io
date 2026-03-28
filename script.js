@@ -21,13 +21,27 @@ function escapeHtml(text) {
     .replace(/'/g, "&#39;");
 }
 
+function resolveContentUrl(url, assetBase) {
+  const value = String(url || "").trim();
+  if (!value) return value;
+  if (/^(?:[a-z]+:|\/|#)/i.test(value)) return value;
+  if (
+    /^(?:assets\/|content\/|vc\/|index\.html|article\.html|favicon\.ico|site\.webmanifest)/i.test(
+      value,
+    )
+  ) {
+    return value;
+  }
+  return assetBase ? `${assetBase}/${value}` : value;
+}
+
 function formatEmphasis(escapedText) {
   return escapedText
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
     .replace(/\*([^*]+)\*/g, "<em>$1</em>");
 }
 
-function renderInlineMarkdown(text) {
+function renderInlineMarkdown(text, assetBase) {
   const source = String(text || "");
   const tokenRegex =
     /!\[([^\]]*)\]\(([^)]+)\)|\[([^\]]+)\]\(([^)]+)\)|`([^`]+)`/g;
@@ -40,14 +54,15 @@ function renderInlineMarkdown(text) {
 
     if (match[1] !== undefined && match[2] !== undefined) {
       const alt = escapeHtml(match[1] || "");
-      const imageUrl = escapeHtml(match[2]);
+      const imageUrl = escapeHtml(resolveContentUrl(match[2], assetBase));
       output += `<img src="${imageUrl}" alt="${alt}" loading="lazy" />`;
     } else if (match[3] !== undefined && match[4] !== undefined) {
       const label = escapeHtml(match[3]);
-      const url = escapeHtml(match[4]);
+      const resolvedUrl = resolveContentUrl(match[4], assetBase);
+      const url = escapeHtml(resolvedUrl);
       const external = /^https?:\/\//i.test(match[4]);
       const localFile =
-        !external && /\.(txt|md|pdf|zip|csv|json)$/i.test(match[4]);
+        !external && /\.(txt|md|pdf|zip|csv|json)$/i.test(resolvedUrl);
       const extraAttrs = external
         ? ' target="_blank" rel="noopener noreferrer"'
         : localFile
@@ -65,7 +80,7 @@ function renderInlineMarkdown(text) {
   return output;
 }
 
-function markdownToHtml(markdown) {
+function markdownToHtml(markdown, assetBase) {
   const lines = String(markdown || "")
     .replace(/\r\n/g, "\n")
     .split("\n");
@@ -78,7 +93,7 @@ function markdownToHtml(markdown) {
 
   function flushParagraph() {
     if (!paragraph.length) return;
-    html.push(`<p>${renderInlineMarkdown(paragraph.join(" "))}</p>`);
+    html.push(`<p>${renderInlineMarkdown(paragraph.join(" "), assetBase)}</p>`);
     paragraph = [];
   }
 
@@ -139,21 +154,27 @@ function markdownToHtml(markdown) {
     if (trimmed.startsWith("## ")) {
       flushParagraph();
       closeList();
-      html.push(`<h2>${renderInlineMarkdown(trimmed.slice(3))}</h2>`);
+      html.push(
+        `<h2>${renderInlineMarkdown(trimmed.slice(3), assetBase)}</h2>`,
+      );
       return;
     }
 
     if (trimmed.startsWith("### ")) {
       flushParagraph();
       closeList();
-      html.push(`<h3>${renderInlineMarkdown(trimmed.slice(4))}</h3>`);
+      html.push(
+        `<h3>${renderInlineMarkdown(trimmed.slice(4), assetBase)}</h3>`,
+      );
       return;
     }
 
     if (trimmed.startsWith("# ")) {
       flushParagraph();
       closeList();
-      html.push(`<h1>${renderInlineMarkdown(trimmed.slice(2))}</h1>`);
+      html.push(
+        `<h1>${renderInlineMarkdown(trimmed.slice(2), assetBase)}</h1>`,
+      );
       return;
     }
 
@@ -168,7 +189,7 @@ function markdownToHtml(markdown) {
       flushParagraph();
       closeList();
       html.push(
-        `<blockquote>${renderInlineMarkdown(trimmed.slice(2))}</blockquote>`,
+        `<blockquote>${renderInlineMarkdown(trimmed.slice(2), assetBase)}</blockquote>`,
       );
       return;
     }
@@ -176,7 +197,9 @@ function markdownToHtml(markdown) {
     if (trimmed.startsWith("- ")) {
       flushParagraph();
       openList("ul");
-      html.push(`<li>${renderInlineMarkdown(trimmed.slice(2))}</li>`);
+      html.push(
+        `<li>${renderInlineMarkdown(trimmed.slice(2), assetBase)}</li>`,
+      );
       return;
     }
 
@@ -184,7 +207,7 @@ function markdownToHtml(markdown) {
       flushParagraph();
       openList("ol");
       html.push(
-        `<li>${renderInlineMarkdown(trimmed.replace(/^\d+\.\s+/, ""))}</li>`,
+        `<li>${renderInlineMarkdown(trimmed.replace(/^\d+\.\s+/, ""), assetBase)}</li>`,
       );
       return;
     }
@@ -294,7 +317,10 @@ function renderArticlePage() {
   summaryEl.hidden = section.slug === "projects";
   summaryEl.textContent =
     section.slug === "projects" ? "" : article.summary || "";
-  contentEl.innerHTML = markdownToHtml(article.content || "");
+  contentEl.innerHTML = markdownToHtml(
+    article.content || "",
+    article.assetBase,
+  );
   backLink.href = `index.html#${section.slug}`;
 }
 

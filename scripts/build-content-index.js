@@ -70,6 +70,33 @@ function parseDateToEpoch(dateText) {
   return Date.UTC(year, month, day);
 }
 
+function extractSummaryAndContent(rawContent) {
+  const lines = rawContent.split(/\r?\n/);
+  const firstContentIndex = lines.findIndex((line) => line.trim());
+  if (firstContentIndex === -1) {
+    return { summary: "", content: "" };
+  }
+
+  const firstLine = lines[firstContentIndex].trim();
+  const headingMatch = firstLine.match(/^#+\s*(.+)$/);
+  if (!headingMatch) {
+    return {
+      summary: firstLine,
+      content: rawContent.trim(),
+    };
+  }
+
+  const remainingLines = lines.slice(firstContentIndex + 1);
+  while (remainingLines.length && !remainingLines[0].trim()) {
+    remainingLines.shift();
+  }
+
+  return {
+    summary: headingMatch[1].trim(),
+    content: remainingLines.join("\n").trim(),
+  };
+}
+
 function listSectionDirectories() {
   if (!fs.existsSync(CONTENT_ROOT)) {
     return [];
@@ -102,16 +129,18 @@ function buildEntries(sectionName) {
 
       const date = `${match[1]}-${match[2]}-${match[3]}`;
       const stem = match[4];
-      const content = fs.readFileSync(path.join(dir, fileName), "utf8").trim();
-      const summaryLine =
-        content.split(/\r?\n/).find((line) => line.trim()) || "";
+      const rawContent = fs
+        .readFileSync(path.join(dir, fileName), "utf8")
+        .trim();
+      const parsed = extractSummaryAndContent(rawContent);
 
       return {
         id: `${date}-${stem}`.toLowerCase(),
         date,
         title: formatLabel(stem),
-        summary: summaryLine.replace(/^#+\s*/, "").trim(),
-        content,
+        summary: parsed.summary,
+        content: parsed.content,
+        assetBase: `content/${sectionName}`,
         fileName,
         sortKey: parseDateToEpoch(date),
       };

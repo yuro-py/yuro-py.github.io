@@ -315,13 +315,13 @@ a:hover {
 
 .article-summary {
     max-width: 62ch;
-    color: #c1c1c1;
+    color: inherit;
     margin-bottom: 2rem;
 }
 
 @media (prefers-color-scheme: light) {
     .article-summary {
-        color: #666;
+        color: inherit;
     }
 }
 
