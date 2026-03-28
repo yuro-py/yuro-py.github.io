@@ -1,10 +1,10 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const openButton = document.getElementById("friendship-test-open");
-  const closeButton = document.getElementById("friendship-test-close");
-  const nextButton = document.getElementById("friendship-test-next");
-  const modal = document.getElementById("friendship-test-modal");
-  const stage = document.getElementById("friendship-test-stage");
-  const progress = document.getElementById("friendship-test-progress");
+  const openButton = document.getElementById("vibe-check-open");
+  const closeButton = document.getElementById("vibe-check-close");
+  const nextButton = document.getElementById("vibe-check-next");
+  const modal = document.getElementById("vibe-check-modal");
+  const stage = document.getElementById("vibe-check-stage");
+  const progress = document.getElementById("vibe-check-progress");
 
   if (
     !openButton ||
@@ -25,21 +25,21 @@ document.addEventListener("DOMContentLoaded", function () {
           key: "A",
           text: "Solo/Alone",
           points: 5,
-          image: "ft/assets/solo.jpg",
+          image: "vc/assets/solo.jpg",
           imagePosition: "center center",
         },
         {
           key: "B",
           text: "Small group",
           points: 3,
-          image: "ft/assets/small.jpg",
+          image: "vc/assets/small.jpg",
           imagePosition: "center center",
         },
         {
           key: "C",
           text: "Big group",
           points: 0,
-          image: "ft/assets/group.jpg",
+          image: "vc/assets/group.jpg",
           imagePosition: "center 58%",
         },
       ],
@@ -184,14 +184,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     stage.innerHTML = `
       <div class="ft-question-wrap">
-        <p class="ft-kicker">Friendship Test</p>
+        <p class="ft-kicker">VIBE CHECK</p>
         <h2 class="ft-question">${question.prompt}</h2>
         ${detailHtml}
-        <div class="ft-options" id="friendship-test-options"></div>
+        <div class="ft-options" id="vibe-check-options"></div>
       </div>
     `;
 
-    const options = document.getElementById("friendship-test-options");
+    const options = document.getElementById("vibe-check-options");
     question.options.forEach(function (option) {
       const button = document.createElement("button");
       button.type = "button";
@@ -234,11 +234,11 @@ document.addEventListener("DOMContentLoaded", function () {
             </ul>
           </div>
         </div>
-        <button type="button" class="ft-next" id="friendship-test-start">start</button>
+        <button type="button" class="ft-next" id="vibe-check-start">start</button>
       </div>
     `;
 
-    const startButton = document.getElementById("friendship-test-start");
+    const startButton = document.getElementById("vibe-check-start");
     startButton.addEventListener("click", function () {
       started = true;
       renderQuestion();
