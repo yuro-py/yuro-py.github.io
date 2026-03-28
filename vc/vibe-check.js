@@ -251,8 +251,8 @@ document.addEventListener("DOMContentLoaded", function () {
       <div class="ft-result">
         <p>${
           score >= 90
-            ? "Vibe matched! Reach out on X/Twitter if you want to chat!"
-            : "Heavily incompatible. Get lost!."
+            ? "We are so alike! Reach out on X/Twitter if you want to chat!"
+            : "We are veryyyy different. Get lost!"
         }</p>
       </div>
     `;
