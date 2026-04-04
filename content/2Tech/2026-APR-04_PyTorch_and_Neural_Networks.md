@@ -37,7 +37,7 @@ Remove the header, convert this data into a tensor like this:-
 ... ], dtype=torch.float32)
 ```
 
-Now what we will do is, use the first three columns(features of the house) and predict the price for each row.
+Now what we will do is, use the first three columns(features of the house) and predict the price(4th column) for each row.
 So make two new tensors acquired from "houses" variable, named "features" and "targets".
 
 ```
