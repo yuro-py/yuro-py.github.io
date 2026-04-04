@@ -13,10 +13,10 @@ On the other hand, a tensor is an array but with even more extra abilities and p
 [0.26, 0.21, 0.39, 0.07, 0.12, 0.42]
 
 # TENSOR OPERATIONS:-
-a. torch.add() -> adds tensors of same dimensions
-b. torch.sub() -> subtracts tensors of same dims
-c. torch.div() -> divides tensors of same dims
-d. torch.mul() -> multiplies same dims
+1. torch.add() -> adds tensors of same dimensions
+2. torch.sub() -> subtracts tensors of same dims
+3. torch.div() -> divides tensors of same dims
+4. torch.mul() -> multiplies same dims
 ...and so on...
 
 # NOW LET'S CONVERT A REAL DATA INTO A TENSOR
