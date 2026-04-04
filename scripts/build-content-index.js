@@ -169,4 +169,10 @@ function buildIndex() {
   console.log(`Generated ${path.relative(ROOT, OUTPUT_FILE)}`);
 }
 
-buildIndex();
+if (require.main === module) {
+  buildIndex();
+}
+
+module.exports = {
+  buildIndex,
+};

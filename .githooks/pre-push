@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+node scripts/build-content-index.js >/dev/null
+
+if ! git diff --quiet -- content-index.js; then
+    echo "content-index.js was stale and changed during pre-push."
+    echo "Commit the updated content-index.js, then push again."
+    git status --short -- content-index.js
+    exit 1
+fi
