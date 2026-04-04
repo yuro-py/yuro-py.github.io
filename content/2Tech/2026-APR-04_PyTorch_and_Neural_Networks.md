@@ -69,10 +69,10 @@ This is a simple neural network with input node, two hidden layers, and an outpu
 ![neural_net.jpg](files/neural_net.jpg)
 
 Let's go a bit deeper into one singular node inside a layer(either h1 or h2) to see what happens there:-
-a. Each node has something called a "weight" and a "bias" defined already in the starting. For example "h1_1" can be:-
+1. Each node has something called a "weight" and a "bias" defined already in the starting. For example "h1_1" can be:-
 weights = [0.11, 0.12, -0.25]
 bias = 0.75
-b. When the input arrives, each element of the input is multiplied with the weights:-
+2. When the input arrives, each element of the input is multiplied with the weights:-
 -> (2 * 0.11) + (65 * 0.12) + (15 * -0.25) = 4.27
 and the bias is added to the result:-
 -> 4.27 + 0.75 = 5.02
@@ -80,9 +80,9 @@ and the bias is added to the result:-
 This is called a "Linear Transformation" and in PyTorch it's handled by "torch.nn.Linear()", the output is then passed forward.
 
 Next here are "Non-Linear Transformations" that are called "Activation functions" in PyTorch:-
-a. relu(x) -> converts negative numbers to 0, keeps positive same
-b. sigmoid(x) -> converts any number into a range between 0 and 1
-c. tanh(x) -> converts any number into a range between -1 and 1(its zero-centered)
+1. relu(x) -> converts negative numbers to 0, keeps positive same
+2. sigmoid(x) -> converts any number into a range between 0 and 1
+3. tanh(x) -> converts any number into a range between -1 and 1(its zero-centered)
 ...and so on...
 
 The output we got from "nn.Linear" will be fed to relu(5.02).
@@ -322,7 +322,7 @@ YAYY!!...We are done in just 5 experiments!
 We trained a small neural network from scratch and it works too.
 
 I can explain the difference between updating epochs and updating lr in this manner:-
-a. updating epochs means the programs runs longer and has more time to learn with whatever learning intensity already set
-b. updating lr means the program learns with more/less intensely in each move with whatever learning time already set
+1. updating epochs means the programs runs longer and has more time to learn with whatever learning intensity already set
+2. updating lr means the program learns with more/less intensely in each move with whatever learning time already set
 
 Thanks a lot for reading!
