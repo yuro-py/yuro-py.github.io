@@ -195,7 +195,7 @@ We will do multiple experiments and see now the results
 .
 (suggested : when we update epochs, update the condition for "print epoch" to as many lines as you need. suggested 5-10)
 
-1. Now time to check results from the first run:-
+a. Now time to check results from the first run:-
 ```
 Training started...
 Epoch 100: Loss = 2805.7588
@@ -221,7 +221,7 @@ House 6: Predicted $209k, Actual $245k
 We can see the loss is very high and the prediction isn't too accurate in most cases if we confirm above. 
 So we will manually nudge, either the learning rate, or epochs. Learning rate is a sensitive value so first let's increase the number of epochs to see if loss goes down or not.
 
-2. Epoch 1000 -> Epoch 5000 
+b. Epoch 1000 -> Epoch 5000 
 ```
 Training started...
 Epoch 500: Loss = 164384.6719
@@ -245,7 +245,7 @@ House 6: Predicted $49k, Actual $245k
 ```
 This result is somehow even worse. Let's increase it to 10000 and see.
 
-3. Epoch 5000 -> Epoch 10000
+c. Epoch 5000 -> Epoch 10000
 ```
 Training started...
 Epoch 1000: Loss = 1972.3585
@@ -269,7 +269,7 @@ House 6: Predicted $228k, Actual $245k
 ```
 Somewhat better, the last 4 predictions are very close overall. Now let's change the learning rate a bit and see what happens to the loss.
 
-4. lr 0.01 -> lr 0.01
+d. lr 0.01 -> lr 0.01
 ```
 Training started...
 Epoch 1000: Loss = 3518.3184
@@ -295,7 +295,7 @@ SO CLOSE........
 
 Now let's increase the epoch just a tiny bit
 
-5. Epoch 10000 -> 10500
+e. Epoch 10000 -> 10500
 ```
 Training started...
 Epoch 1000: Loss = 2701.0085
