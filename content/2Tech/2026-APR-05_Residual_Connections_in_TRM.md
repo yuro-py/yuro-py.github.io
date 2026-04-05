@@ -40,7 +40,7 @@ This code is doing exactly what a human would do, but for a neural network.
 
 # BREAKING THOSE DOWN:-
 
-1. "z = net(x + y + z)" -> Thinking
+1) "z = net(x + y + z)" -> Thinking
 
     a. This formula adds x (constant puzzle), y (current guess) and z (scratchpad) and pushes the result through a neural network to return a new, improvised z (scratchpad). It repeats this thing 6 times.
 
@@ -48,7 +48,7 @@ This code is doing exactly what a human would do, but for a neural network.
 
     c. This mimics human thinking because we don’t erase old memory while solving a puzzle, instead we keep building upon the previous step with new information. Hence "adding" makes sense here and even gives results.
 
-2. "y = net(y, z)" -> Refining next answer
+2) "y = net(y, z)" -> Refining next answer
 
     a. After the model has done its deep thinking 6 times, it verifies the current answer against the expected output, takes the latest z (thinking) and generates a new, improvised y (new best guess).
 
