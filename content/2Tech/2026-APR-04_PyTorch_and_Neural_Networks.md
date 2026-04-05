@@ -73,7 +73,7 @@ Let's go a bit deeper into one singular node inside a layer(either h1 or h2) to 
 weights = [0.11, 0.12, -0.25]
 bias = 0.75
 2. When the input arrives, each element of the input is multiplied with the weights:-
--> (2 * 0.11) + (65 * 0.12) + (15 * -0.25) = 4.27
+-> (2 x 0.11) + (65 x 0.12) + (15 x -0.25) = 4.27
 and the bias is added to the result:-
 -> 4.27 + 0.75 = 5.02
 
@@ -95,6 +95,7 @@ import torch
 import torch.nn as nn
 target = torch.tensor([100, 200, 300, 400, 500], dtype=torch.float32)
 prediction = torch.tensor([101, 198, 303, 396, 505], dtype=torch.float32)
+criterion = nn.MSELoss()
 loss = criterion(prediction, target)
 print(loss)
 >>> tensor(11.)
@@ -141,7 +142,7 @@ class HousePricePredictor(nn.Module): # "HousePricePredictor" inherits propertie
     def __init__(self):
         super().__init__() # this thing just connects "HousePricePredictor" and "nn.Module" properly or else we would get some errors
         # This is how "Linear Transformation" is being taken care by "nn.Linear".
-        # Layerd and nodes are being formed from the transformations
+        # Layers and nodes are being formed from the transformations
         self.linear1 = nn.Linear(3, 6)   # 3 inputs -> 6 hidden neurons (1st hidden layer)
         self.linear2 = nn.Linear(6, 4)   # 6 hidden -> 4 hidden neurons (2nd hidden layer)
         self.linear3 = nn.Linear(4, 1)   # 4 hidden -> 1 output (price)
@@ -269,7 +270,7 @@ House 6: Predicted $228k, Actual $245k
 ```
 Somewhat better, the last 4 predictions are very close overall. Now let's change the learning rate a bit and see what happens to the loss.
 
-d. lr 0.01 -> lr 0.01
+d. lr 0.1 -> lr 0.01
 ```
 Training started...
 Epoch 1000: Loss = 3518.3184

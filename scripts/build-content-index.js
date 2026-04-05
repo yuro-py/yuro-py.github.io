@@ -113,8 +113,9 @@ function listSectionDirectories() {
 
 function buildEntries(sectionName) {
   const dir = path.join(CONTENT_ROOT, sectionName);
+  const invalidFiles = [];
 
-  return fs
+  const entries = fs
     .readdirSync(dir, { withFileTypes: true })
     .filter((entry) => entry.isFile())
     .map((entry) => entry.name)
@@ -122,9 +123,8 @@ function buildEntries(sectionName) {
     .map((fileName) => {
       const match = fileName.match(NAME_PATTERN);
       if (!match) {
-        throw new Error(
-          `Invalid filename in ${sectionName}: ${fileName} (expected YYYY-MON-DD_name.md)`,
-        );
+        invalidFiles.push(fileName);
+        return null;
       }
 
       const date = `${match[1]}-${match[2]}-${match[3]}`;
@@ -145,10 +145,19 @@ function buildEntries(sectionName) {
         sortKey: parseDateToEpoch(date),
       };
     })
+    .filter(Boolean)
     .sort(
       (a, b) => b.sortKey - a.sortKey || b.fileName.localeCompare(a.fileName),
     )
     .map(({ fileName, sortKey, ...entry }) => entry);
+
+  if (invalidFiles.length) {
+    console.warn(
+      `Skipped invalid markdown filenames in ${sectionName}: ${invalidFiles.join(", ")}`,
+    );
+  }
+
+  return entries;
 }
 
 function buildIndex() {
