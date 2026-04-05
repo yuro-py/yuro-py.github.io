@@ -8,6 +8,8 @@ def latent recursion(x, y, z, n=6):
         return y, z
 ```
 
+While I was reading the TRM paper, this piece of logic didn't fit well with me, as to how does adding the question, the answer and the logic, would help in deriving a "more correct" answer in anyway?So I delved into this to form a bridge of understanding as to how this is the best way to replicate human thinking in solving grid-based puzzles.
+
 These two formulas in there are the actual driving force of "thinking/reasoning" computationally:-
 a. z = net(x, y, z)   # latent reasoning
 b. y = net(y, z)      # refine output answer
@@ -43,3 +45,15 @@ Breaking those down:-
 
 The "Human Behaviour" connection:-
 Is "adding" really how humans think?
+We do think "iteratively and recursively", which, when compared to how giant LLMs "reason" in one guess based upon a massive dataset is actually not how humans think.
+
+We update the working memory by combining it with new observations based upon new hypothesis. Given that we are mainly solving grid-based puzzles here, "adding" resonates the most with how humans would solve a grid-based puzzle.
+
+The residual connection[z=net(x+y+z)] is a mathematical way to give the neural network a working, persistent and updatable memory. Without it, each "thinking" step would be isolated and wouldn't "build upon" previous progress. With it, the network can build a chain of reasoning, with one small addition at a time.
+
+Bottom Line:-
+This is far from replicating a human thought process neuron-by-neuron, but if we abstract away the intricate process of how a human brain actually solves any and every problem, then the surface implementation remains "observe, guess, refine, repeat", which is already mimicking a huge-portion of how a human thinks.
+
+With the power of recursively looping and refining, there is a possibility to simulate a much deeper and powerful reasoning process. Bottleneck -> Problems have to be converted into grid-forms for TRM to be able to solve it and surpass humans. It's not versatile, this wall is where giant LLMs jump over and win by having solved-datasets by humans and making a single best-guess. 
+
+Thanks for reading!
