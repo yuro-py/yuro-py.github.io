@@ -39,12 +39,19 @@ def latent_recursion(x, y, z, n=6):
 This code is doing exactly what a human would do, but for a neural network.
 
 # BREAKING THOSE DOWN:-
+
 1. "z = net(x + y + z)" -> Thinking
-    a. this formula adds x(constant puzzle), y(current guess) and z(scratchpad) and pushes the result through a neural network to return a new, improvised z(scratchpad). It repeats this thing 6 times.
+
+    a. This formula adds x (constant puzzle), y (current guess) and z (scratchpad) and pushes the result through a neural network to return a new, improvised z (scratchpad). It repeats this thing 6 times.
+
     b. "Residual Connection" is where we add the current thinking with the previous thinking. This is just "adding you to yourself" thing.
-    c. This mimics human thinking because we dont erase old memory while solving a puzzle, instead we keep building upon the previous step with new information. Hence "adding" makes sense here and even gives results.
+
+    c. This mimics human thinking because we don’t erase old memory while solving a puzzle, instead we keep building upon the previous step with new information. Hence "adding" makes sense here and even gives results.
+
 2. "y = net(y, z)" -> Refining next answer
-    a. After the model has done it's deep thinking 6 times, it verifies the current answer against the expected output, takes the latest z(thinking) and generates a new, improvised y(new best guess).
+
+    a. After the model has done its deep thinking 6 times, it verifies the current answer against the expected output, takes the latest z (thinking) and generates a new, improvised y (new best guess).
+
     b. This is when you are done with the rough work and finally write the step you are 100% confident in.
 
 # THE "HUMAN" CONNECTION:-
@@ -58,6 +65,8 @@ The residual connection[z=net(x+y+z)] is a mathematical way to give the neural n
 # BOTTOM LINE:-
 This is far from replicating a human thought process neuron-by-neuron, but if we abstract away the intricate process of how a human brain actually solves any and every problem, then the surface implementation remains "observe, guess, refine, repeat", which is already mimicking a huge-portion of how a human thinks.
 
-With the power of recursively looping and refining, there is a possibility to simulate a much deeper and powerful reasoning process. Bottleneck -> Problems have to be converted into grid-forms for TRM to be able to solve it and surpass humans. It's not versatile, this wall is where giant LLMs jump over and win by having solved-datasets by humans and making a single best-guess. 
+With the power of recursively looping and refining, there is a possibility to simulate a much deeper and powerful reasoning process. 
+
+Bottleneck -> Problems have to be converted into grid-forms for TRM to be able to solve it. It's not versatile yet, this wall is where giant LLMs jump over and win by having massive solved-datasets by humans and making a single best-guess. 
 
 Thanks for reading!
