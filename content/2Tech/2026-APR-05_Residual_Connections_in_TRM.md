@@ -8,7 +8,7 @@ def latent recursion(x, y, z, n=6):
         return y, z
 ```
 
-While I was reading the TRM paper, this piece of logic didn't fit well with me, as to how does adding the question, the answer and the logic, would help in deriving a "more correct" answer in anyway?So I delved into this to form a bridge of understanding as to how this is the best way to replicate human thinking in solving grid-based puzzles.
+While I was reading the TRM paper few days ago, this piece of logic didn't fit well with me, as to how does adding the question, the answer and the logic, would help in deriving a "more correct" answer in anyway?So I delved into this to form a bridge of understanding as to how this is the best way to replicate human thinking in solving grid-based puzzles.
 
 These two formulas in there are the actual driving force of "thinking/reasoning" computationally:-
 1. z = net(x, y, z)   # latent reasoning
