@@ -1,4 +1,4 @@
-We will learn this with respect to what we already know about tensors in PyTorch.
+We will learn backprop by skimming through what we already know about tensors in PyTorch.
 
 ```
 # these are two sample tensors in upon which we can perform operations.
