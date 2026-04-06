@@ -68,7 +68,7 @@ OPTIONAL READ(on the symbol):-
 
 a. There are many types of it, but "σ" is used to denote the few specific activation functions that are responsible for carrying out "non-linear transformation", eg "sigmoid", "relu" and "tanh" functions. Other types are denoted by other symbols.
 
-b. For those who were confused from the symbol, it was just used as a placeholder instead of writing tanh, relu etc, as "σ" represents them all. While programming, we type "ReLU" and "tanh" to use those activation functions. Once you get used to them, you won't rely much on symbols, but it's suggested that you be aware of them to be able to identity them in research papers and search them better :)
+b. For those who were confused from the symbol, it was just used as a placeholder instead of writing tanh, relu etc, as "σ" represents them all. While programming, we type "ReLU" and "tanh" to use those activation functions. Once you get used to them, you won't rely much on symbols, but it's suggested that you be aware of them to be able to identify them in research papers and search them better :)
 
 ## CALCULATING LOSS
 
@@ -82,7 +82,7 @@ Loss = (output - target)^2
 "output - target" makes total sense as "how much loss did I face from this operation?" in a general sense, but why are we squaring it?
 
 1. To convert the negative loss values to positive as "as close to zero as possible" is what we want but negative loss will be "better than perfect" so that will lead to some other complicacies, so we are getting rid of that.
-2. The positive error will get squared and become a massive error(eg 3 -> 9). This pushes our model to avoid large errors and overcorrect it by updating weights better(the learning part from "backpropagation")
+2. The positive error will get squared and become a massive error(eg 3 -> 9). This pushes our model to avoid large errors and strongly correct it by updating weights better(the learning part from "backpropagation")
 
 ## COMPUTATIONAL GRAPH
 
