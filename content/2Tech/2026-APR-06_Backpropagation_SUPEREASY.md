@@ -35,7 +35,7 @@ Here,
 
 2. y = σ(z)
 # This is called a "Non-Linear Transformation" that gives the output. 
-# [this weird symbol "σ" will be explained ;) dw]
+# Also, this weird symbol "σ" will be explained don't worry ;)
 
 # The above two steps happens inside the neuron, now we are outside
 
