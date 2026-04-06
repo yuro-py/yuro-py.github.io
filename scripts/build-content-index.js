@@ -80,9 +80,14 @@ function extractSummaryAndContent(rawContent) {
   const firstLine = lines[firstContentIndex].trim();
   const headingMatch = firstLine.match(/^#+\s*(.+)$/);
   if (!headingMatch) {
+    const remainingLines = lines.slice(firstContentIndex + 1);
+    while (remainingLines.length && !remainingLines[0].trim()) {
+      remainingLines.shift();
+    }
+
     return {
       summary: firstLine,
-      content: rawContent.trim(),
+      content: remainingLines.join("\n").trim(),
     };
   }
 

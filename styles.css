@@ -438,3 +438,23 @@ a:hover {
         border-color: #d0d7de;
     }
 }
+
+@media (min-width: 960px) {
+    .navbar,
+    .content,
+    .footer {
+        width: 100%;
+        max-width: 75vw;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .article-summary,
+    .article-body {
+        max-width: none;
+    }
+
+    .article-body img {
+        max-width: 100%;
+    }
+}
