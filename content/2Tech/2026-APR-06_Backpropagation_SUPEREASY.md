@@ -169,9 +169,12 @@ This is where "learning" happens. After getting all the gradients from the compu
 Note -> There is something called an "optimizer" which fetches the weights, biases and "updates" them using the "update rule", but we are not relying on optimizers now. We will be doing it manually)
 
 ```
+for weight:-
 new_weight = old_weight - (learning_rate * slope)
 
-# replace old/new "weight" with "bias" to update bias aswell.
+for bias:-
+new_bias = old_bias - (learning_rate * slope)
+
 ```
 
 
