@@ -18,7 +18,7 @@ Let's see how this works, by pressing a button called.....
 
 # "FORWARD PASS"
 ```
-Input to the network -> Node performs some activity(weight's involved -> Output observed -> Loss calculated
+Input to the network -> Node performs some activity where weight's are involved -> Output observed -> Loss calculated
 ```
 
 Representing it mathematically :-
