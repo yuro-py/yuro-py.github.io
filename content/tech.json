@@ -1,0 +1,46 @@
+[
+  {
+    "id": "gnn-notes",
+    "label": "Deep Learning",
+    "title": "MIT 6.7960 - Graph Neural Networks",
+    "summary": "Implementation notes on message passing, permutation invariance, WL expressiveness, and Laplacian positional encodings.",
+    "tags": ["gnns", "mit", "deep-learning"],
+    "post": "./posts/gnn-notes.md",
+    "links": [
+      {"label": "GitHub", "url": "https://github.com/yuro-py"}
+    ]
+  },
+  {
+    "id": "fixed-point-trm",
+    "label": "Research",
+    "title": "Fixed-Point Iteration and Contraction Maps in TRM",
+    "summary": "Applying Banach fixed-point intuition to token-recurrent architectures and implicit differentiation through recursive state updates.",
+    "tags": ["math", "banach", "implicit-diff"],
+    "post": "./posts/fixed-point-trm.md",
+    "links": [
+      {"label": "Notes", "url": "https://github.com/yuro-py"}
+    ]
+  },
+  {
+    "id": "relu-kinks",
+    "label": "Approximation Theory",
+    "title": "ReLU Kink Counting",
+    "summary": "Finite-difference experiments for counting piecewise-linear regions and connecting ReLU expressivity to approximation bounds.",
+    "tags": ["relu", "pytorch", "approximation"],
+    "post": "./posts/relu-kinks.md",
+    "links": [
+      {"label": "GitHub", "url": "https://github.com/yuro-py"}
+    ]
+  },
+  {
+    "id": "gaussian-ptrm",
+    "label": "Probabilistic ML",
+    "title": "Gaussian Noise Injection in PTRM",
+    "summary": "Sampling schedules, variance control, and noise-injected process tokens for robust process-level reasoning models.",
+    "tags": ["ptrm", "gaussian", "probability"],
+    "post": "./posts/gaussian-ptrm.md",
+    "links": [
+      {"label": "Paper", "url": "https://arxiv.org/pdf/2605.19943.pdf"}
+    ]
+  }
+]

@@ -1,0 +1,35 @@
+[
+  {
+    "id": "trm-ptrm",
+    "label": "Research Implementation",
+    "title": "TRM + PTRM Unified Codebase",
+    "summary": "Token Turing Machines and Process-Token Reasoning Models implemented from scratch for constrained hardware and benchmark-agnostic reasoning experiments.",
+    "tags": ["pytorch", "reasoning", "trm", "ptrm", "samsung-sail"],
+    "post": "./posts/trm-ptrm.md",
+    "links": [
+      {"label": "GitHub", "url": "https://github.com/yuro-py"}
+    ]
+  },
+  {
+    "id": "the-world",
+    "label": "Web / OSS",
+    "title": "the-world - Open-Source Earth",
+    "summary": "A civic platform that treats the world like a repository: file problems, discuss fixes, vote on priority, and keep public state inspectable.",
+    "tags": ["github-pages", "cloudflare", "open-source"],
+    "post": "./posts/the-world.md",
+    "links": [
+      {"label": "GitHub", "url": "https://github.com/yuro-py"}
+    ]
+  },
+  {
+    "id": "portfolio-workstation",
+    "label": "Portfolio",
+    "title": "Interactive Research Workstation",
+    "summary": "This site: a high-end command workstation that integrates research notes, projects, writing, and technical documents into a focused portfolio surface.",
+    "tags": ["three.js", "static-site", "design-systems"],
+    "post": "./posts/portfolio-workstation.md",
+    "links": [
+      {"label": "Live", "url": "https://yuro-py.github.io"}
+    ]
+  }
+]

@@ -1,0 +1,108 @@
+.markdown{
+  max-width:780px;
+  color:#d8dde2;
+  font-size:15px;
+  line-height:1.75;
+}
+.markdown h1,.markdown h2,.markdown h3{
+  color:#f2f5f7;
+  line-height:1.22;
+  letter-spacing:0;
+}
+.markdown h1{font-size:32px;margin:10px 0 18px}
+.markdown h2{font-size:22px;margin:34px 0 12px}
+.markdown h3{font-size:17px;margin:26px 0 10px}
+.markdown p{margin:13px 0;color:#c4cbd1}
+.markdown strong{color:#f3f6f8}
+.markdown a{color:#9dc5e4;text-decoration:none;border-bottom:1px solid rgba(157,197,228,.45)}
+.markdown a:hover{color:#d6eafb;border-color:#d6eafb}
+.markdown ul,.markdown ol{margin:12px 0 18px 22px;color:#c4cbd1}
+.markdown li{margin:7px 0}
+.markdown blockquote{
+  margin:20px 0;
+  padding:12px 16px;
+  border-left:2px solid #5e7486;
+  background:#10151a;
+  color:#aeb7bf;
+}
+.markdown img{
+  display:block;
+  max-width:100%;
+  height:auto;
+  margin:22px 0;
+  border:1px solid #303942;
+  background:#090c0f;
+}
+.markdown table{
+  width:100%;
+  border-collapse:collapse;
+  margin:22px 0;
+  font-size:13px;
+}
+.markdown th,.markdown td{
+  border:1px solid #303942;
+  padding:9px 11px;
+  text-align:left;
+  vertical-align:top;
+}
+.markdown th{
+  background:#171d23;
+  color:#edf1f4;
+  font-weight:680;
+}
+.markdown td{color:#bec6cd}
+.markdown pre{
+  margin:18px 0;
+  border:1px solid #303942;
+  background:#0a0d10;
+  overflow:auto;
+}
+.markdown code{
+  font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  font-size:.92em;
+}
+.markdown p code,.markdown li code,.markdown td code{
+  background:#151b21;
+  border:1px solid #2c353d;
+  color:#e0e6eb;
+  padding:2px 5px;
+}
+.markdown pre code{
+  display:block;
+  padding:16px;
+  background:transparent;
+}
+.github-embed{
+  display:block;
+  margin:22px 0;
+  border:1px solid #303942;
+  background:#101418;
+  padding:16px;
+  text-decoration:none!important;
+}
+.github-embed strong{
+  display:block;
+  color:#f1f4f6;
+  font-size:15px;
+}
+.github-embed span{
+  display:block;
+  margin-top:6px;
+  color:#909aa3;
+  font-size:12px;
+}
+.pdf-link::after{
+  content:"PDF";
+  display:inline-block;
+  margin-left:8px;
+  border:1px solid #52616e;
+  color:#c7d5df;
+  padding:1px 4px;
+  font-size:9px;
+  letter-spacing:1px;
+}
+.katex-display{
+  overflow-x:auto;
+  overflow-y:hidden;
+  padding:8px 0;
+}

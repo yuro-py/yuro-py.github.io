@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="420" viewBox="0 0 960 420" role="img" aria-labelledby="title desc">
+  <title id="title">Reasoning stack diagram</title>
+  <desc id="desc">A dark technical diagram showing data, process tokens, recurrent state, and verifier flow.</desc>
+  <rect width="960" height="420" fill="#0b0f13"/>
+  <g fill="none" stroke="#40505c" stroke-width="2">
+    <rect x="58" y="92" width="176" height="86"/>
+    <rect x="292" y="92" width="176" height="86"/>
+    <rect x="526" y="92" width="176" height="86"/>
+    <rect x="292" y="242" width="176" height="86"/>
+    <rect x="526" y="242" width="176" height="86"/>
+  </g>
+  <g stroke="#78a9c8" stroke-width="3" fill="none">
+    <path d="M234 135h58"/>
+    <path d="M468 135h58"/>
+    <path d="M614 178v64"/>
+    <path d="M526 285h-58"/>
+    <path d="M380 242v-64"/>
+  </g>
+  <g font-family="Inter, Arial, sans-serif" fill="#d9e2e8">
+    <text x="102" y="130" font-size="20" font-weight="700">Input</text>
+    <text x="87" y="155" font-size="13" fill="#8d9aa5">tokens / constraints</text>
+    <text x="320" y="130" font-size="20" font-weight="700">Process</text>
+    <text x="324" y="155" font-size="13" fill="#8d9aa5">latent state</text>
+    <text x="558" y="130" font-size="20" font-weight="700">Verifier</text>
+    <text x="552" y="155" font-size="13" fill="#8d9aa5">score / halt</text>
+    <text x="334" y="280" font-size="20" font-weight="700">Update</text>
+    <text x="322" y="305" font-size="13" fill="#8d9aa5">recurrent map</text>
+    <text x="565" y="280" font-size="20" font-weight="700">Trace</text>
+    <text x="552" y="305" font-size="13" fill="#8d9aa5">diagnostics</text>
+  </g>
+  <g opacity=".25" stroke="#78a9c8">
+    <path d="M780 74h110M780 98h80M780 122h130M780 146h92M780 170h118"/>
+    <path d="M76 344h190M76 366h136M76 388h218"/>
+  </g>
+</svg>
