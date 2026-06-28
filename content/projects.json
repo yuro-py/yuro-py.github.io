@@ -22,12 +22,12 @@
     ]
   },
   {
-    "id": "portfolio-workstation",
+    "id": "portfolio",
     "label": "Portfolio",
-    "title": "Interactive Research Workstation",
-    "summary": "This site: a high-end command workstation that integrates research notes, projects, writing, and technical documents into a focused portfolio surface.",
+    "title": "Interactive Research Portfolio",
+    "summary": "This site: a focused research portfolio that integrates research notes, projects, writing, and technical documents into a clean surface.",
     "tags": ["three.js", "static-site", "design-systems"],
-    "post": "./posts/portfolio-workstation.md",
+    "post": "./posts/portfolio.md",
     "links": [
       {"label": "Live", "url": "https://yuro-py.github.io"}
     ]

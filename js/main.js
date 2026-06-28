@@ -549,7 +549,7 @@ function parseMarkdown(markdown, assetBase) {
   // Preprocess relative image files
   let processedMarkdown = resolveAssetUrls(markdown, assetBase);
 
-  // Parse custom workstation github link embeds (e.g., `::github https://github.com/...`)
+  // Parse custom github link embeds (e.g., `::github https://github.com/...`)
   let expanded = processedMarkdown.replace(/^::github\s+(https:\/\/github\.com\/[^\s]+)\s*$/gm, (_, url) => {
     const label = url.replace('https://github.com/', '');
     return `<a class="github-embed" href="${url}" target="_blank" rel="noreferrer"><strong>${label}</strong><span>GitHub repository / profile reference</span></a>`;

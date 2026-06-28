@@ -1,4 +1,4 @@
-# Interactive Research Workstation
+# Interactive Research Portfolio
 
 This portfolio is designed as a research surface rather than a marketing page. The 3D environment stays in the background and the tablet interface carries the work.
 
