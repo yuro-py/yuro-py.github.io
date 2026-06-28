@@ -56,8 +56,7 @@ function init() {
   blogReadContainer = document.getElementById('blog-read-container');
   blogPostContent = document.getElementById('blog-post-content');
 
-  // Pre-inject the ← Back button inside overlay header dynamically
-  injectOverlayBackButton();
+
 
   // Apply saved theme
   applyTheme();
@@ -192,145 +191,6 @@ function setupEventListeners() {
   if (btnThemeToggle) {
     btnThemeToggle.addEventListener('click', toggleTheme);
   }
-}
-
-// --- Content Index Helper ---
-function getEntriesForSlug(slug) {
-  const contentIndex = window.CONTENT_INDEX || { sections: [] };
-  const section = contentIndex.sections.find(s => s.slug === slug);
-  return section ? section.entries || [] : [];
-}
-
-// --- Section Navigation & Rendering (Overlay) ---
-function openSectionOverlay(section) {
-  if (sectionOverlay) {
-    currentSection = section;
-    
-    // Set title
-    const contentIndex = window.CONTENT_INDEX || { sections: [] };
-    const secObj = contentIndex.sections.find(s => s.slug === section);
-    if (overlayTitle) {
-      overlayTitle.textContent = secObj ? secObj.label : (section === 'technicals' ? 'Technicals' : (section === 'writeups' ? 'Writeups' : 'Projects'));
-    }
-
-    sectionOverlay.classList.add('open');
-    
-    // Injected Back Button Inside Header Dynamically
-    injectOverlayBackButton();
-
-    // Resume background video if playing
-    if (bgVideo) bgVideo.play().catch(() => {});
-
-    // Populate list
-    const entries = getEntriesForSlug(section);
-    renderOverlayList(entries, section);
-  }
-}
-
-// Close section modal overlay
-function closeSectionOverlay() {
-  if (sectionOverlay) {
-    sectionOverlay.classList.remove('open');
-  }
-}
-
-// Prepend back button into overlay header dynamically
-function injectOverlayBackButton() {
-  if (!sectionOverlay) return;
-  const header = sectionOverlay.querySelector('.projects-header');
-  if (header && !header.querySelector('.btn-back-projects')) {
-    const backBtn = document.createElement('button');
-    backBtn.className = 'btn-control btn-back-projects';
-    backBtn.type = 'button';
-    backBtn.style.marginRight = '16px';
-    backBtn.innerHTML = `
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-      Back
-    `;
-    backBtn.addEventListener('click', closeSectionOverlay);
-    header.insertBefore(backBtn, header.firstChild);
-  }
-}
-
-function extractFirstLink(markdown) {
-  if (!markdown) return '#';
-  const match = /\[[^\]]+\]\((https?:\/\/[^)]+)\)/.exec(markdown);
-  return match ? match[1] : '#';
-}
-
-function renderOverlayList(entries, section) {
-  if (!overlayList) return;
-
-  if (entries.length === 0) {
-    overlayList.innerHTML = '<div class="blog-status">Nothing here yet — check back soon.</div>';
-    return;
-  }
-
-  overlayList.innerHTML = '';
-  entries.forEach(entry => {
-    if (section === 'projects') {
-      const url = entry.url || extractFirstLink(entry.content);
-
-      const card = document.createElement('div');
-      card.className = 'project-card-item';
-      card.style.cursor = 'pointer';
-      
-      card.addEventListener('click', () => {
-        window.open(url, '_blank');
-      });
-
-      card.innerHTML = `
-        <div class="project-link-header">
-          <span class="project-title-link">
-            ${entry.title}
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="7" y1="17" x2="17" y2="7"></line>
-              <polyline points="7 7 17 7 17 17"></polyline>
-            </svg>
-          </span>
-          <span class="project-meta-label">${entry.date || 'Project'}</span>
-        </div>
-        <p class="project-desc">${entry.summary || ''}</p>
-        <div class="project-external-url" style="margin-top: 10px; font-family: var(--font-mono); font-size: 11px; color: var(--home-accent); opacity: 0.85; word-break: break-all;">
-          <a href="${url}" target="_blank" rel="noopener noreferrer" style="border-bottom: 1px solid rgba(109, 168, 216, 0.3); padding-bottom: 2px;">${url}</a>
-        </div>
-      `;
-
-      const linkNode = card.querySelector('.project-external-url a');
-      if (linkNode) {
-        linkNode.addEventListener('click', (e) => {
-          e.stopPropagation();
-        });
-      }
-
-      overlayList.appendChild(card);
-    } else {
-      // Technicals or Writeups
-      const card = document.createElement('div');
-      card.className = 'project-card-item';
-      card.style.cursor = 'pointer';
-      
-      card.addEventListener('click', () => {
-        closeSectionOverlay();
-        navigateToPost(section, entry.id);
-      });
-
-      card.innerHTML = `
-        <div class="project-link-header">
-          <span class="project-title-link">
-            ${entry.title}
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
-          </span>
-          <span class="project-meta-label">${entry.date || ''}</span>
-        </div>
-      `;
-
-      overlayList.appendChild(card);
-    }
-  });
 }
 
 // --- Blog Navigation & Rendering ---
@@ -484,9 +344,6 @@ async function openSectionOverlay(section) {
     }
 
     sectionOverlay.classList.add('open');
-    
-    // Injected Back Button Inside Header Dynamically
-    injectOverlayBackButton();
 
     // Resume background video if playing
     if (bgVideo) bgVideo.play().catch(() => {});
@@ -514,23 +371,7 @@ function closeSectionOverlay() {
   }
 }
 
-// Prepend back button into overlay header dynamically
-function injectOverlayBackButton() {
-  if (!sectionOverlay) return;
-  const header = sectionOverlay.querySelector('.projects-header');
-  if (header && !header.querySelector('.btn-back-projects')) {
-    const backBtn = document.createElement('button');
-    backBtn.className = 'btn-control btn-back-projects';
-    backBtn.type = 'button';
-    backBtn.style.marginRight = '16px';
-    backBtn.innerHTML = `
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-      Back
-    `;
-    backBtn.addEventListener('click', closeSectionOverlay);
-    header.insertBefore(backBtn, header.firstChild);
-  }
-}
+
 
 function extractFirstLink(markdown) {
   if (!markdown) return '#';

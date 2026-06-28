@@ -44,45 +44,45 @@
 
 /* --- Themes for Blog View --- */
 .blog-theme-sunset {
-  --blog-bg: #fff5eb;
-  --blog-card-bg: #fffcf9;
-  --blog-txt: #432818;
-  --blog-txt-muted: #85624c;
-  --blog-accent: #d46a43;
-  --blog-accent-light: #ffe5d9;
-  --blog-border: #f7d6c8;
-  --blog-border-hover: #e3b09c;
-  --blog-shadow: 0 4px 10px rgba(67, 40, 24, 0.03);
-  --blog-shadow-hover: 0 12px 24px rgba(67, 40, 24, 0.06);
-  --blog-heading: #2b1608;
-  --blog-accent-hover: #b84f27;
-  --inline-code-txt: #c2410c;
-  --inline-code-bg: #fff7ed;
-  --inline-code-border: #ffedd5;
+  --blog-bg: #ffeada; /* Deeper warm late evening sunset glow */
+  --blog-card-bg: #fffbf7;
+  --blog-txt: #4a2810;
+  --blog-txt-muted: #8c5835;
+  --blog-accent: #e05315; /* More vibrant orange sunset accent */
+  --blog-accent-light: #ffe5d5;
+  --blog-border: #ffd5be;
+  --blog-border-hover: #ffad82;
+  --blog-shadow: 0 4px 10px rgba(74, 40, 16, 0.03);
+  --blog-shadow-hover: 0 12px 24px rgba(74, 40, 16, 0.06);
+  --blog-heading: #311100;
+  --blog-accent-hover: #c4410b;
+  --inline-code-txt: #e05315;
+  --inline-code-bg: #fff5ee;
+  --inline-code-border: #ffe0d0;
   --code-bg: #1e293b;
   --code-txt: #e2e8f0;
-  --blog-table-even-bg: rgba(67, 40, 24, 0.03);
+  --blog-table-even-bg: rgba(74, 40, 16, 0.03);
 }
 
 .blog-theme-midnight {
-  --blog-bg: #0c1020;
-  --blog-card-bg: #151d35;
-  --blog-txt: #e2e8f0;
-  --blog-txt-muted: #94a3b8;
-  --blog-accent: #6da8d8;
-  --blog-accent-light: rgba(109, 168, 216, 0.15);
+  --blog-bg: #07090e; /* Deeper real-life midnight sky (obsidian black) */
+  --blog-card-bg: #11141d; /* Deep rich charcoal card */
+  --blog-txt: #cbd5e1;
+  --blog-txt-muted: #64748b;
+  --blog-accent: #38bdf8; /* Neon blue accent */
+  --blog-accent-light: rgba(56, 189, 248, 0.12);
   --blog-border: #1e293b;
   --blog-border-hover: #334155;
-  --blog-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  --blog-shadow-hover: 0 12px 24px rgba(0, 0, 0, 0.4);
-  --blog-heading: #ffffff;
-  --blog-accent-hover: #93c5fd;
+  --blog-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  --blog-shadow-hover: 0 16px 32px rgba(0, 0, 0, 0.8);
+  --blog-heading: #f8fafc;
+  --blog-accent-hover: #7dd3fc;
   --inline-code-txt: #38bdf8;
-  --inline-code-bg: #0f172a;
+  --inline-code-bg: #0b0f19;
   --inline-code-border: #1e293b;
-  --code-bg: #0f172a;
+  --code-bg: #0b0f19;
   --code-txt: #f1f5f9;
-  --blog-table-even-bg: rgba(255, 255, 255, 0.03);
+  --blog-table-even-bg: rgba(255, 255, 255, 0.015);
 }
 
 /* --- 2. Global Resets --- */
@@ -195,15 +195,15 @@ button {
 .hero-kicker {
   font-family: var(--font-mono);
   font-size: 13px;
+  font-weight: 600;
   letter-spacing: 4px;
   text-transform: uppercase;
-  color: var(--home-txt-muted);
+  color: #e2e8f0;
   margin-bottom: 20px;
-  opacity: 0.8;
 }
 
 .hero-name {
-  font-size: clamp(64px, 10vw, 110px);
+  font-size: clamp(48px, 7vw, 76px);
   font-weight: 800;
   line-height: 0.9;
   letter-spacing: -2px;
@@ -213,8 +213,9 @@ button {
 }
 
 .hero-tag {
-  font-size: clamp(20px, 2.5vw, 26px);
-  font-weight: 300;
+  font-family: var(--font-mono);
+  font-size: clamp(15px, 2.2vw, 20px);
+  font-weight: 400;
   color: #e2e8f0;
   max-width: 480px;
   margin-bottom: 15px;
@@ -382,10 +383,13 @@ button {
 .projects-header {
   padding: 24px 30px 16px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+  min-height: 75px;
 }
+
 
 .projects-header .btn-control {
   background: rgba(255, 255, 255, 0.05);
@@ -410,6 +414,10 @@ button {
 }
 
 .close-btn {
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
   font-size: 32px;
   color: var(--home-txt-muted);
   line-height: 1;

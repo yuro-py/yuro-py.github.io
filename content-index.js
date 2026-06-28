@@ -18,7 +18,7 @@ window.CONTENT_INDEX = {
       "slug": "technicals",
       "label": "Technicals",
       "files": [
-        "Backpropagation_SUPEREASY.md",
+        "Backpropagation_101.md",
         "Residual_Connections_in_TRM.md",
         "PyTorch_and_Neural_Networks.md",
         "Tiny_Recursive_Models.md"
@@ -28,9 +28,7 @@ window.CONTENT_INDEX = {
       "slug": "writeups",
       "label": "Writeups",
       "files": [
-        "sample_writing_2.md",
-        "sample_writing_1.md",
-        "sample_markdown_file.md"
+	"AGI_philosophical_take.md",
       ]
     }
   ]
