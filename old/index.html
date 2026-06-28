@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>yuro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/tablet.css">
+  <link rel="stylesheet" href="./css/markdown.css">
+</head>
+<body>
+  <canvas id="scene-canvas" aria-hidden="true"></canvas>
+  <div id="atmosphere" aria-hidden="true"></div>
+
+  <section id="identity" aria-label="Portfolio identity">
+    <p id="id-kicker">private research workstation</p>
+    <h1 id="id-name">yuro</h1>
+    <p id="id-tag">researching efficient reasoning</p>
+    <p id="id-disc">math / research / implementation</p>
+    <div id="id-line"></div>
+    <nav id="id-socials" aria-label="Social links">
+      <a class="soc-link" href="https://github.com/yuro-py" target="_blank" rel="noreferrer">gh</a>
+      <a class="soc-link" href="https://x.com/yur_o_0" target="_blank" rel="noreferrer">x</a>
+      <a class="soc-link" href="https://www.linkedin.com/in/yuro-bb2688392/" target="_blank" rel="noreferrer">li</a>
+      <a class="soc-link" href="https://huggingface.co/yuro-py" target="_blank" rel="noreferrer">hf</a>
+      <a class="soc-link" href="mailto:yuroxebec@gmail.com">mail</a>
+    </nav>
+  </section>
+
+  <nav id="nav" aria-label="Portfolio sections">
+    <button class="nav-btn" data-section="projects" type="button">Projects</button>
+    <button class="nav-btn" data-section="tech" type="button">Tech</button>
+    <button class="nav-btn" data-section="writings" type="button">Writings</button>
+  </nav>
+
+  <section id="tablet-overlay" aria-hidden="true">
+    <div id="tablet-shell" role="dialog" aria-modal="true" aria-labelledby="tablet-title">
+      <header id="tablet-header">
+        <div>
+          <p id="tablet-context">archive</p>
+          <h2 id="tablet-title">Projects</h2>
+        </div>
+        <div id="tablet-actions">
+          <button id="tablet-back" class="tablet-icon hidden" type="button" aria-label="Back to list">Back</button>
+          <button id="tablet-close" class="tablet-icon" type="button" aria-label="Close">Close</button>
+        </div>
+      </header>
+      <div id="tablet-status" role="status" aria-live="polite"></div>
+      <div id="tablet-body"></div>
+    </div>
+  </section>
+
+  <main id="mobile-ui">
+    <header id="m-topbar">
+      <p id="m-kicker">private research workstation</p>
+      <h1 id="m-name">yuro</h1>
+      <p id="m-tag">researching efficient reasoning</p>
+      <p id="m-disc">math / research / implementation</p>
+      <nav id="m-socials" aria-label="Mobile social links">
+        <a class="m-soc" href="https://github.com/yuro-py" target="_blank" rel="noreferrer">GitHub</a>
+        <a class="m-soc" href="https://x.com/yur_o_0" target="_blank" rel="noreferrer">X</a>
+        <a class="m-soc" href="https://www.linkedin.com/in/yuro-bb2688392/" target="_blank" rel="noreferrer">LinkedIn</a>
+        <a class="m-soc" href="https://huggingface.co/yuro-py" target="_blank" rel="noreferrer">HF</a>
+        <a class="m-soc" href="mailto:yuroxebec@gmail.com">Email</a>
+      </nav>
+    </header>
+
+    <section class="m-section" data-mobile-section="projects">
+      <button class="m-sect-header" type="button">
+        <span>Projects</span>
+        <span aria-hidden="true">+</span>
+      </button>
+      <div class="m-sect-body"></div>
+    </section>
+    <section class="m-section" data-mobile-section="tech">
+      <button class="m-sect-header" type="button">
+        <span>Tech</span>
+        <span aria-hidden="true">+</span>
+      </button>
+      <div class="m-sect-body"></div>
+    </section>
+    <section class="m-section" data-mobile-section="writings">
+      <button class="m-sect-header" type="button">
+        <span>Writings</span>
+        <span aria-hidden="true">+</span>
+      </button>
+      <div class="m-sect-body"></div>
+    </section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
