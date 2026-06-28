@@ -47,9 +47,9 @@
       <div class="home-container">
         <!-- Hero Section -->
         <header class="hero-section" id="hero-identity">
-          <span class="hero-kicker">private research workstation</span>
+          <span class="hero-kicker">TRUE PIRATE</span>
           <h1 class="hero-name">yuro</h1>
-          <p class="hero-tag">researching efficient reasoning</p>
+          <p class="hero-tag">🇮🇳 ・ researching efficient reasoning</p>
           <p class="hero-disc">math / research / implementation</p>
           <div class="hero-line"></div>
         </header>
@@ -57,32 +57,32 @@
         <!-- Main Interactive Navigation -->
         <nav class="main-nav" aria-label="Workstation Navigation">
           <button id="nav-projects" class="nav-item" type="button">Projects</button>
-          <button id="nav-tech" class="nav-item" type="button">Tech</button>
-          <button id="nav-writings" class="nav-item" type="button">Writings</button>
+          <button id="nav-technicals" class="nav-item" type="button">Technicals</button>
+          <button id="nav-writeups" class="nav-item" type="button">Writeups</button>
           <div class="nav-dropdown-container">
             <button id="nav-socials" class="nav-item" type="button">
               Socials
               <svg class="dropdown-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </button>
             <div id="socials-dropdown" class="socials-dropdown">
-              <a href="https://github.com/yuro-py" target="_blank" rel="noreferrer" class="social-sublink">gh</a>
-              <a href="https://x.com/yur_o_0" target="_blank" rel="noreferrer" class="social-sublink">x</a>
-              <a href="https://www.linkedin.com/in/yuro-bb2688392/" target="_blank" rel="noreferrer" class="social-sublink">li</a>
-              <a href="https://huggingface.co/yuro-py" target="_blank" rel="noreferrer" class="social-sublink">hf</a>
-              <a href="mailto:yuroxebec@gmail.com" class="social-sublink">mail</a>
+              <a href="https://github.com/yuro-py" target="_blank" rel="noreferrer" class="social-sublink">GitHub</a>
+              <a href="https://x.com/yur_o_0" target="_blank" rel="noreferrer" class="social-sublink">Twitter / X</a>
+              <a href="https://www.linkedin.com/in/yuro-bb2688392/" target="_blank" rel="noreferrer" class="social-sublink">LinkedIn</a>
+              <a href="https://huggingface.co/yuro-py" target="_blank" rel="noreferrer" class="social-sublink">Hugging Face</a>
+              <a href="mailto:yuroxebec@gmail.com" class="social-sublink">Email</a>
             </div>
           </div>
         </nav>
       </div>
       
-      <!-- Projects Glassmorphic Overlay Panel -->
-      <div id="projects-overlay" class="projects-overlay" role="dialog" aria-modal="true" aria-labelledby="projects-overlay-title">
+      <!-- Glassmorphic Section Overlay Panel -->
+      <div id="section-overlay" class="projects-overlay" role="dialog" aria-modal="true" aria-labelledby="section-overlay-title">
         <div class="projects-card">
           <header class="projects-header">
-            <h2 id="projects-overlay-title" class="projects-overlay-title">Projects</h2>
-            <button id="close-projects" class="close-btn" aria-label="Close projects overlay">&times;</button>
+            <h2 id="section-overlay-title" class="projects-overlay-title"></h2>
+            <button id="close-overlay" class="close-btn" aria-label="Close overlay">&times;</button>
           </header>
-          <div id="projects-list" class="projects-list-content">
+          <div id="overlay-list" class="projects-list-content">
             <!-- Dynamically populated -->
           </div>
         </div>
@@ -95,31 +95,27 @@
         
         <!-- 20% Left Column -->
         <aside class="blog-col-left">
-          <button class="btn-control btn-back-home" id="btn-back-home" type="button">
+          <button class="btn-control btn-back-home" id="btn-back-home" type="button" style="width: 100%; justify-content: flex-start; gap: 8px;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
             Home
+          </button>
+          <button class="btn-control btn-theme-toggle" id="btn-theme-toggle" type="button" style="margin-top: 15px; width: 100%; justify-content: flex-start; gap: 8px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            <span>Theme: Sunset</span>
           </button>
         </aside>
         
         <!-- 60% Central Content Column -->
         <main class="blog-col-center">
-          <!-- Blog Index (Post list) -->
-          <div id="blog-list-container" class="blog-list-container">
-            <header class="blog-header">
-              <h1 id="blog-section-title" class="blog-section-title">Writings</h1>
-              <p id="blog-section-subtitle" class="blog-section-subtitle">Thoughts on computation, math, and learning</p>
-            </header>
-            <div id="blog-items" class="blog-items-list">
-              <!-- Dynamically populated -->
-            </div>
-          </div>
-          
           <!-- Blog Reading View (Single post content) -->
-          <div id="blog-read-container" class="blog-read-container hidden">
-            <button class="btn-control btn-back-list" id="btn-back-list" type="button">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-              Back to List
-            </button>
+          <div id="blog-read-container" class="blog-read-container">
+            <div class="blog-read-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 1px solid var(--blog-border); padding-bottom: 15px;">
+              <button class="btn-control btn-back-list" id="btn-back-list" type="button" style="margin-bottom: 0;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Back to List
+              </button>
+              <span id="blog-read-date" class="blog-read-date" style="font-family: var(--font-mono); font-size: 13px; color: var(--blog-txt-muted); font-weight: 500;"></span>
+            </div>
             <article id="blog-post-content" class="blog-post-markdown markdown-body">
               <!-- Dynamically rendered markdown content -->
             </article>

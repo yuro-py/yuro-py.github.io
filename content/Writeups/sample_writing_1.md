@@ -1,3 +1,4 @@
+Date: 2026-MAR-25
 ## Intro
 This is a demo post that shows everything you can do in one article entry.
 
@@ -19,7 +20,7 @@ This is a demo post that shows everything you can do in one article entry.
 
 ## Links
 - External link: [OpenAI](https://openai.com/)
-- Internal link: [Jump to tech section](index.html#tech)
+- Internal link: [Jump to Technicals section](index.html#technicals)
 - Article source file: [Sample resource file](assets/files/sample-writing-2-resource.txt)
 
 ## Code block

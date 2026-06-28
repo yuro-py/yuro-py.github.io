@@ -1,3 +1,4 @@
+Date: 2026-MAR-07
 # The Hidden Depths of Markdown  
 *A demonstration article showing the full expressive power of Markdown inside a portfolio website.*
 

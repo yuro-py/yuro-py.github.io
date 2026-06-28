@@ -1,3 +1,4 @@
+Date: 2026-APR-05
 The 'thinking' code block in TRM:-
 
 ```

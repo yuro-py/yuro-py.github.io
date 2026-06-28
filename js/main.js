@@ -3,66 +3,69 @@
    ========================================== */
 
 // Simple in-memory state variables
-let currentSection = null; // 'projects', 'tech', 'writings'
+let currentSection = null; // 'projects', 'technicals', 'writeups'
 let currentPostId = null;  // Active blog post ID
+
+// Theme Configuration
+const THEMES = ['sunset', 'midnight'];
+let currentTheme = localStorage.getItem('blog-theme') || 'sunset';
+if (!THEMES.includes(currentTheme)) {
+  currentTheme = 'sunset';
+}
 
 // Section Subtitles
 const SUBTITLES = {
-  tech: 'Implementation notes, ML theory, and systems engineering',
-  writings: 'Thoughts on computation, math, and learning'
+  'technicals': 'My experiments, implementations and observations',
+  'writeups': 'Scratchpad for other stuff'
 };
 
 // DOM Element References
 let homeView, blogView, bgVideo;
-let navProjects, navTech, navWritings, navSocials, socialsDropdown;
-let projectsOverlay, projectsList, closeProjects;
-let btnBackHome, btnBackList, blogListContainer, blogReadContainer;
-let blogItems, blogPostContent, blogSectionTitle, blogSectionSubtitle;
+let navProjects, navTechnicals, navWriteups, navSocials, socialsDropdown;
+let sectionOverlay, overlayTitle, overlayList, closeOverlay;
+let btnBackHome, btnBackList, blogReadContainer;
+let blogPostContent;
+let btnThemeToggle;
 
 // Initialize Application
 function init() {
+  if (window.location.protocol === 'file:') {
+    window.location.replace('http://localhost:8000');
+    return;
+  }
+
   // Query references dynamically to guarantee DOM is fully parsed
   homeView = document.getElementById('home-view');
   blogView = document.getElementById('blog-view');
   bgVideo = document.getElementById('bg-video');
 
   navProjects = document.getElementById('nav-projects');
-  navTech = document.getElementById('nav-tech');
-  navWritings = document.getElementById('nav-writings');
+  navTechnicals = document.getElementById('nav-technicals');
+  navWriteups = document.getElementById('nav-writeups');
   navSocials = document.getElementById('nav-socials');
   socialsDropdown = document.getElementById('socials-dropdown');
 
-  projectsOverlay = document.getElementById('projects-overlay');
-  projectsList = document.getElementById('projects-list');
-  closeProjects = document.getElementById('close-projects');
+  sectionOverlay = document.getElementById('section-overlay');
+  overlayTitle = document.getElementById('section-overlay-title');
+  overlayList = document.getElementById('overlay-list');
+  closeOverlay = document.getElementById('close-overlay');
 
   btnBackHome = document.getElementById('btn-back-home');
   btnBackList = document.getElementById('btn-back-list');
-  blogListContainer = document.getElementById('blog-list-container');
+  btnThemeToggle = document.getElementById('btn-theme-toggle');
   blogReadContainer = document.getElementById('blog-read-container');
-  blogItems = document.getElementById('blog-items');
   blogPostContent = document.getElementById('blog-post-content');
-  blogSectionTitle = document.getElementById('blog-section-title');
-  blogSectionSubtitle = document.getElementById('blog-section-subtitle');
 
-  // Verify elements exist to help debugging
-  const elements = {
-    homeView, blogView, navProjects, navTech, navWritings, navSocials, socialsDropdown,
-    projectsOverlay, projectsList, closeProjects, btnBackHome, btnBackList,
-    blogListContainer, blogReadContainer, blogItems, blogPostContent, blogSectionTitle, blogSectionSubtitle
-  };
-  
-  for (const [name, el] of Object.entries(elements)) {
-    if (!el && name !== 'bgVideo') {
-      console.warn(`yuro Portfolio: Required element "${name}" was not found in the DOM.`);
-    }
-  }
+  // Pre-inject the ← Back button inside overlay header dynamically
+  injectOverlayBackButton();
 
-  // Pre-inject the ← Back button inside projects header
-  injectProjectsBackButton();
+  // Apply saved theme
+  applyTheme();
 
   // Bind all event listeners
   setupEventListeners();
+
+
 
   // Try to play background video on start
   if (bgVideo) {
@@ -79,26 +82,64 @@ function init() {
   }
 }
 
+// Apply Selected CSS Theme to Blog View
+function applyTheme() {
+  if (!blogView) return;
+  
+  // Clean all custom theme classes
+  blogView.classList.remove('blog-theme-sunset', 'blog-theme-midnight');
+  
+  // Apply specific classes (sunset is now the default theme)
+  if (currentTheme === 'sunset') {
+    blogView.classList.add('blog-theme-sunset');
+  } else if (currentTheme === 'midnight') {
+    blogView.classList.add('blog-theme-midnight');
+  }
+
+  // Update theme button label and icon if available
+  if (btnThemeToggle) {
+    const labelSpan = btnThemeToggle.querySelector('span');
+    if (labelSpan) {
+      labelSpan.textContent = `Theme: ${currentTheme.charAt(0).toUpperCase() + currentTheme.slice(1)}`;
+    }
+    
+    // Update theme icon (sunset shows sun, midnight shows moon)
+    const existingSvg = btnThemeToggle.querySelector('svg');
+    if (existingSvg) {
+      if (currentTheme === 'sunset') {
+        existingSvg.innerHTML = `<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>`;
+      } else {
+        existingSvg.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+      }
+    }
+  }
+}
+
+// Cycle to next theme
+function toggleTheme() {
+  const currentIdx = THEMES.indexOf(currentTheme);
+  currentTheme = THEMES[(currentIdx + 1) % THEMES.length];
+  localStorage.setItem('blog-theme', currentTheme);
+  applyTheme();
+}
+
 // Attach event listeners safely checking for element existence
 function setupEventListeners() {
   if (navProjects) {
     navProjects.addEventListener('click', () => {
-      currentSection = 'projects';
-      openProjectsOverlay();
+      openSectionOverlay('projects');
     });
   }
 
-  if (navTech) {
-    navTech.addEventListener('click', () => {
-      currentSection = 'tech';
-      navigateToSection('tech');
+  if (navTechnicals) {
+    navTechnicals.addEventListener('click', () => {
+      openSectionOverlay('technicals');
     });
   }
 
-  if (navWritings) {
-    navWritings.addEventListener('click', () => {
-      currentSection = 'writings';
-      navigateToSection('writings');
+  if (navWriteups) {
+    navWriteups.addEventListener('click', () => {
+      openSectionOverlay('writeups');
     });
   }
 
@@ -113,39 +154,43 @@ function setupEventListeners() {
     if (socialsDropdown) socialsDropdown.classList.remove('show');
   });
 
-  if (closeProjects) {
-    closeProjects.addEventListener('click', closeProjectsOverlay);
+  if (closeOverlay) {
+    closeOverlay.addEventListener('click', closeSectionOverlay);
   }
 
-  if (projectsOverlay) {
-    projectsOverlay.addEventListener('click', (e) => {
-      if (e.target === projectsOverlay) {
-        closeProjectsOverlay();
+  if (sectionOverlay) {
+    sectionOverlay.addEventListener('click', (e) => {
+      if (e.target === sectionOverlay) {
+        closeSectionOverlay();
       }
     });
   }
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      closeProjectsOverlay();
+      closeSectionOverlay();
       if (socialsDropdown) socialsDropdown.classList.remove('show');
     }
   });
 
   if (btnBackHome) {
     btnBackHome.addEventListener('click', () => {
+      closeSectionOverlay();
       navigateToHome();
     });
   }
 
   if (btnBackList) {
     btnBackList.addEventListener('click', () => {
+      navigateToHome();
       if (currentSection) {
-        navigateToSection(currentSection);
-      } else {
-        navigateToHome();
+        openSectionOverlay(currentSection);
       }
     });
+  }
+
+  if (btnThemeToggle) {
+    btnThemeToggle.addEventListener('click', toggleTheme);
   }
 }
 
@@ -156,30 +201,43 @@ function getEntriesForSlug(slug) {
   return section ? section.entries || [] : [];
 }
 
-// --- Projects Navigation & Rendering ---
-function openProjectsOverlay() {
-  if (projectsOverlay) {
-    projectsOverlay.classList.add('open');
+// --- Section Navigation & Rendering (Overlay) ---
+function openSectionOverlay(section) {
+  if (sectionOverlay) {
+    currentSection = section;
     
+    // Set title
+    const contentIndex = window.CONTENT_INDEX || { sections: [] };
+    const secObj = contentIndex.sections.find(s => s.slug === section);
+    if (overlayTitle) {
+      overlayTitle.textContent = secObj ? secObj.label : (section === 'technicals' ? 'Technicals' : (section === 'writeups' ? 'Writeups' : 'Projects'));
+    }
+
+    sectionOverlay.classList.add('open');
+    
+    // Injected Back Button Inside Header Dynamically
+    injectOverlayBackButton();
+
     // Resume background video if playing
     if (bgVideo) bgVideo.play().catch(() => {});
 
-    // Populate projects list
-    const projects = getEntriesForSlug('projects');
-    renderProjectsList(projects);
+    // Populate list
+    const entries = getEntriesForSlug(section);
+    renderOverlayList(entries, section);
   }
 }
 
-function closeProjectsOverlay() {
-  if (projectsOverlay) {
-    projectsOverlay.classList.remove('open');
-    currentSection = null;
+// Close section modal overlay
+function closeSectionOverlay() {
+  if (sectionOverlay) {
+    sectionOverlay.classList.remove('open');
   }
 }
 
-function injectProjectsBackButton() {
-  if (!projectsOverlay) return;
-  const header = projectsOverlay.querySelector('.projects-header');
+// Prepend back button into overlay header dynamically
+function injectOverlayBackButton() {
+  if (!sectionOverlay) return;
+  const header = sectionOverlay.querySelector('.projects-header');
   if (header && !header.querySelector('.btn-back-projects')) {
     const backBtn = document.createElement('button');
     backBtn.className = 'btn-control btn-back-projects';
@@ -189,7 +247,7 @@ function injectProjectsBackButton() {
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
       Back
     `;
-    backBtn.addEventListener('click', closeProjectsOverlay);
+    backBtn.addEventListener('click', closeSectionOverlay);
     header.insertBefore(backBtn, header.firstChild);
   }
 }
@@ -200,59 +258,83 @@ function extractFirstLink(markdown) {
   return match ? match[1] : '#';
 }
 
-function renderProjectsList(projects) {
-  if (!projectsList) return;
+function renderOverlayList(entries, section) {
+  if (!overlayList) return;
 
-  if (projects.length === 0) {
-    projectsList.innerHTML = '<div class="blog-status">Nothing here yet — check back soon.</div>';
+  if (entries.length === 0) {
+    overlayList.innerHTML = '<div class="blog-status">Nothing here yet — check back soon.</div>';
     return;
   }
 
-  projectsList.innerHTML = '';
-  projects.forEach(project => {
-    const url = project.url || extractFirstLink(project.content);
+  overlayList.innerHTML = '';
+  entries.forEach(entry => {
+    if (section === 'projects') {
+      const url = entry.url || extractFirstLink(entry.content);
 
-    const card = document.createElement('div');
-    card.className = 'project-card-item';
-    card.style.cursor = 'pointer';
-    
-    // Clicking the card opens the URL in a new tab
-    card.addEventListener('click', () => {
-      window.open(url, '_blank');
-    });
-
-    card.innerHTML = `
-      <div class="project-link-header">
-        <span class="project-title-link">
-          ${project.title}
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="7" y1="17" x2="17" y2="7"></line>
-            <polyline points="7 7 17 7 17 17"></polyline>
-          </svg>
-        </span>
-        <span class="project-meta-label">${project.date || 'Project'}</span>
-      </div>
-      <p class="project-desc">${project.summary || ''}</p>
-      <div class="project-external-url" style="margin-top: 10px; font-family: var(--font-mono); font-size: 11px; color: var(--home-accent); opacity: 0.85; word-break: break-all;">
-        <a href="${url}" target="_blank" rel="noopener noreferrer" style="border-bottom: 1px solid rgba(109, 168, 216, 0.3); padding-bottom: 2px;">${url}</a>
-      </div>
-    `;
-
-    // Prevent propagation when clicking the external URL link explicitly
-    const linkNode = card.querySelector('.project-external-url a');
-    if (linkNode) {
-      linkNode.addEventListener('click', (e) => {
-        e.stopPropagation();
+      const card = document.createElement('div');
+      card.className = 'project-card-item';
+      card.style.cursor = 'pointer';
+      
+      card.addEventListener('click', () => {
+        window.open(url, '_blank');
       });
-    }
 
-    projectsList.appendChild(card);
+      card.innerHTML = `
+        <div class="project-link-header">
+          <span class="project-title-link">
+            ${entry.title}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7"></line>
+              <polyline points="7 7 17 7 17 17"></polyline>
+            </svg>
+          </span>
+          <span class="project-meta-label">${entry.date || 'Project'}</span>
+        </div>
+        <p class="project-desc">${entry.summary || ''}</p>
+        <div class="project-external-url" style="margin-top: 10px; font-family: var(--font-mono); font-size: 11px; color: var(--home-accent); opacity: 0.85; word-break: break-all;">
+          <a href="${url}" target="_blank" rel="noopener noreferrer" style="border-bottom: 1px solid rgba(109, 168, 216, 0.3); padding-bottom: 2px;">${url}</a>
+        </div>
+      `;
+
+      const linkNode = card.querySelector('.project-external-url a');
+      if (linkNode) {
+        linkNode.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+      }
+
+      overlayList.appendChild(card);
+    } else {
+      // Technicals or Writeups
+      const card = document.createElement('div');
+      card.className = 'project-card-item';
+      card.style.cursor = 'pointer';
+      
+      card.addEventListener('click', () => {
+        closeSectionOverlay();
+        navigateToPost(section, entry.id);
+      });
+
+      card.innerHTML = `
+        <div class="project-link-header">
+          <span class="project-title-link">
+            ${entry.title}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </span>
+          <span class="project-meta-label">${entry.date || ''}</span>
+        </div>
+      `;
+
+      overlayList.appendChild(card);
+    }
   });
 }
 
 // --- Blog Navigation & Rendering ---
 function navigateToHome() {
-  currentSection = null;
   currentPostId = null;
 
   if (blogView) blogView.classList.remove('active');
@@ -262,38 +344,15 @@ function navigateToHome() {
   if (bgVideo) bgVideo.play().catch(() => {});
 }
 
-function navigateToSection(section) {
+function navigateToPost(section, postId) {
   currentSection = section;
-  currentPostId = null;
+  currentPostId = postId;
 
   // Pause video to conserve CPU/GPU
   if (bgVideo) bgVideo.pause();
 
   if (homeView) homeView.classList.remove('active');
   if (blogView) blogView.classList.add('active');
-
-  if (blogReadContainer) blogReadContainer.classList.add('hidden');
-  if (blogListContainer) blogListContainer.classList.remove('hidden');
-
-  // Render titles and subtitles
-  if (blogSectionTitle) {
-    blogSectionTitle.textContent = section === 'tech' ? 'Tech' : 'Writings';
-  }
-  if (blogSectionSubtitle) {
-    blogSectionSubtitle.textContent = SUBTITLES[section] || '';
-  }
-
-  // Load and render posts list
-  const posts = getEntriesForSlug(section);
-  renderBlogList(posts, section);
-}
-
-function navigateToPost(section, postId) {
-  currentSection = section;
-  currentPostId = postId;
-
-  if (blogListContainer) blogListContainer.classList.add('hidden');
-  if (blogReadContainer) blogReadContainer.classList.remove('hidden');
 
   if (blogPostContent) {
     blogPostContent.innerHTML = '<div class="blog-status">Fetching record contents...</div>';
@@ -302,73 +361,322 @@ function navigateToPost(section, postId) {
   renderBlogPost(section, postId);
 }
 
-function renderBlogList(posts, section) {
-  if (!blogItems) return;
+// Helper function to safely decode base64 to UTF-8 string
+// --- Content Index Helper & Parser ---
+// Helper function to capitalize/format title from filename
+function formatTitleFromFilename(filename) {
+  let base = filename.replace(/\.md$/, '');
+  let words = base.replace(/[_-]/g, ' ').split(' ');
+  return words.map(word => {
+    if (/[a-z]/.test(word)) {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    }
+    return word;
+  }).join(' ');
+}
 
-  if (posts.length === 0) {
-    blogItems.innerHTML = '<div class="blog-status">Nothing here yet — check back soon.</div>';
+// Helper to parse date and content from article text
+function parseArticleFile(text, filename) {
+  const lines = text.split('\n');
+  let date = '';
+  let contentStartIndex = 0;
+  
+  if (lines.length > 0 && lines[0].startsWith('Date:')) {
+    date = lines[0].replace(/^Date:\s*/i, '').trim();
+    contentStartIndex = 1;
+    while (contentStartIndex < lines.length && lines[contentStartIndex].trim() === '') {
+      contentStartIndex++;
+    }
+  }
+  
+  const content = lines.slice(contentStartIndex).join('\n');
+  const title = formatTitleFromFilename(filename);
+  
+  return {
+    title,
+    date,
+    content
+  };
+}
+
+// Date parsing for sorting
+const MONTHS = {
+  'JAN': 0, 'FEB': 1, 'MAR': 2, 'MARCH': 2, 'APR': 3, 'APRIL': 3,
+  'MAY': 4, 'JUN': 5, 'JUNE': 5, 'JUL': 6, 'JULY': 6, 'AUG': 7, 'AUGUST': 7,
+  'SEP': 8, 'SEPTEMBER': 8, 'OCT': 9, 'OCTOBER': 9, 'NOV': 10, 'NOVEMBER': 10, 'DEC': 11, 'DECEMBER': 11
+};
+
+function parseDateString(dateStr) {
+  if (!dateStr) return new Date(0);
+  const parts = dateStr.toUpperCase().split('-');
+  if (parts.length === 3) {
+    const year = parseInt(parts[0], 10);
+    const month = MONTHS[parts[1]] !== undefined ? MONTHS[parts[1]] : 0;
+    const day = parseInt(parts[2], 10);
+    return new Date(year, month, day);
+  }
+  return new Date(dateStr);
+}
+
+// Global cache for loaded entries to avoid redundant fetches
+const ENTRIES_CACHE = {};
+
+async function getEntriesForSlug(slug) {
+  const contentIndex = window.CONTENT_INDEX || { sections: [] };
+  const section = contentIndex.sections.find(s => s.slug === slug);
+  if (!section) return [];
+
+  if (slug === 'projects') {
+    return section.entries || [];
+  }
+
+  if (ENTRIES_CACHE[slug]) {
+    return ENTRIES_CACHE[slug];
+  }
+
+  const files = section.files || [];
+  const folder = slug === 'technicals' ? 'Technicals' : 'Writeups';
+
+  const entries = await Promise.all(files.map(async (filename) => {
+    const fileUrl = `content/${folder}/${filename}`;
+    const id = filename.replace(/\.md$/, '').toLowerCase().replace(/[_-]/g, '-');
+    try {
+      const res = await fetch(fileUrl, { cache: 'no-cache' });
+      if (!res.ok) throw new Error(`Status ${res.status}`);
+      const text = await res.text();
+      const parsed = parseArticleFile(text, filename);
+      return {
+        id,
+        title: parsed.title,
+        date: parsed.date,
+        content: parsed.content,
+        file: fileUrl
+      };
+    } catch (err) {
+      console.error(`Error loading ${fileUrl}:`, err);
+      return {
+        id,
+        title: formatTitleFromFilename(filename),
+        date: '',
+        content: `### Failed to load content\n\nCould not fetch file at \`${fileUrl}\`. Ensure the local HTTP server is running.`,
+        file: fileUrl
+      };
+    }
+  }));
+
+  // Sort entries by date (newest on top)
+  entries.sort((a, b) => parseDateString(b.date) - parseDateString(a.date));
+
+  ENTRIES_CACHE[slug] = entries;
+  return entries;
+}
+
+// --- Section Navigation & Rendering (Overlay) ---
+async function openSectionOverlay(section) {
+  if (sectionOverlay) {
+    currentSection = section;
+    
+    // Set title
+    const contentIndex = window.CONTENT_INDEX || { sections: [] };
+    const secObj = contentIndex.sections.find(s => s.slug === section);
+    if (overlayTitle) {
+      overlayTitle.textContent = secObj ? secObj.label : (section === 'technicals' ? 'Technicals' : (section === 'writeups' ? 'Writeups' : 'Projects'));
+    }
+
+    sectionOverlay.classList.add('open');
+    
+    // Injected Back Button Inside Header Dynamically
+    injectOverlayBackButton();
+
+    // Resume background video if playing
+    if (bgVideo) bgVideo.play().catch(() => {});
+
+    // Populate list with a loader
+    if (overlayList) {
+      overlayList.innerHTML = '<div class="blog-status">Loading logs & modules...</div>';
+    }
+
+    try {
+      const entries = await getEntriesForSlug(section);
+      renderOverlayList(entries, section);
+    } catch (err) {
+      if (overlayList) {
+        overlayList.innerHTML = `<div class="blog-status" style="color:var(--blog-txt-muted);">Failed to load section: ${err.message}</div>`;
+      }
+    }
+  }
+}
+
+// Close section modal overlay
+function closeSectionOverlay() {
+  if (sectionOverlay) {
+    sectionOverlay.classList.remove('open');
+  }
+}
+
+// Prepend back button into overlay header dynamically
+function injectOverlayBackButton() {
+  if (!sectionOverlay) return;
+  const header = sectionOverlay.querySelector('.projects-header');
+  if (header && !header.querySelector('.btn-back-projects')) {
+    const backBtn = document.createElement('button');
+    backBtn.className = 'btn-control btn-back-projects';
+    backBtn.type = 'button';
+    backBtn.style.marginRight = '16px';
+    backBtn.innerHTML = `
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      Back
+    `;
+    backBtn.addEventListener('click', closeSectionOverlay);
+    header.insertBefore(backBtn, header.firstChild);
+  }
+}
+
+function extractFirstLink(markdown) {
+  if (!markdown) return '#';
+  const match = /\[[^\]]+\]\((https?:\/\/[^)]+)\)/.exec(markdown);
+  return match ? match[1] : '#';
+}
+
+function renderOverlayList(entries, section) {
+  if (!overlayList) return;
+
+  if (entries.length === 0) {
+    overlayList.innerHTML = '<div class="blog-status">Nothing here yet — check back soon.</div>';
     return;
   }
 
-  blogItems.innerHTML = '';
-  posts.forEach(post => {
-    const card = document.createElement('button');
-    card.className = 'blog-card';
-    card.type = 'button';
-    card.style.width = '100%';
-    card.style.textAlign = 'left';
+  overlayList.innerHTML = '';
+  entries.forEach(entry => {
+    if (section === 'projects') {
+      const url = entry.url || extractFirstLink(entry.content);
 
-    const tagLabel = section === 'tech' ? 'Technical Note' : 'Essay';
+      const card = document.createElement('div');
+      card.className = 'project-card-item';
+      card.style.cursor = 'pointer';
+      
+      card.addEventListener('click', () => {
+        window.open(url, '_blank');
+      });
 
-    card.innerHTML = `
-      <div class="blog-card-meta">
-        <span class="blog-card-label">${tagLabel}</span>
-        <span class="blog-card-date">${post.date || ''}</span>
-      </div>
-      <h3 class="blog-card-title">${post.title}</h3>
-      <p class="blog-card-summary">${post.summary || ''}</p>
-    `;
+      card.innerHTML = `
+        <div class="project-link-header">
+          <span class="project-title-link">
+            ${entry.title}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7"></line>
+              <polyline points="7 7 17 7 17 17"></polyline>
+            </svg>
+          </span>
+          <span class="project-meta-label">${entry.date || 'Project'}</span>
+        </div>
+        <p class="project-desc">${entry.summary || ''}</p>
+        <div class="project-external-url" style="margin-top: 10px; font-family: var(--font-mono); font-size: 11px; color: var(--home-accent); opacity: 0.85; word-break: break-all;">
+          <a href="${url}" target="_blank" rel="noopener noreferrer" style="border-bottom: 1px solid rgba(109, 168, 216, 0.3); padding-bottom: 2px;">${url}</a>
+        </div>
+      `;
 
-    card.addEventListener('click', () => {
-      navigateToPost(section, post.id);
-    });
+      const linkNode = card.querySelector('.project-external-url a');
+      if (linkNode) {
+        linkNode.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+      }
 
-    blogItems.appendChild(card);
+      overlayList.appendChild(card);
+    } else {
+      const card = document.createElement('div');
+      card.className = 'project-card-item';
+      card.style.cursor = 'pointer';
+      
+      card.addEventListener('click', () => {
+        closeSectionOverlay();
+        navigateToPost(section, entry.id);
+      });
+
+      card.innerHTML = `
+        <div class="project-link-header">
+          <span class="project-title-link">
+            ${entry.title}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </span>
+          <span class="project-meta-label">${entry.date || ''}</span>
+        </div>
+      `;
+
+      overlayList.appendChild(card);
+    }
   });
+}
+
+// --- Blog Navigation & Rendering ---
+function navigateToHome() {
+  currentPostId = null;
+
+  if (blogView) blogView.classList.remove('active');
+  if (homeView) homeView.classList.add('active');
+
+  // Resume background video if homescreen is active
+  if (bgVideo) bgVideo.play().catch(() => {});
+}
+
+function navigateToPost(section, postId) {
+  currentSection = section;
+  currentPostId = postId;
+
+  // Pause video to conserve CPU/GPU
+  if (bgVideo) bgVideo.pause();
+
+  if (homeView) homeView.classList.remove('active');
+  if (blogView) blogView.classList.add('active');
+
+  if (blogPostContent) {
+    blogPostContent.innerHTML = '<div class="blog-status">Fetching record contents...</div>';
+  }
+
+  renderBlogPost(section, postId);
 }
 
 // --- Fetch and Render Markdown Post ---
 async function renderBlogPost(section, postId) {
   if (!blogPostContent) return;
 
-  const posts = getEntriesForSlug(section);
-  const item = posts.find(p => p.id === postId);
-
-  if (!item) {
-    blogPostContent.innerHTML = '<div class="blog-status">Error: Document metadata not found.</div>';
-    return;
-  }
-
   try {
-    let markdown = '';
-    // Fetch path: Construct from item.post or fallback to posts/[id].md
-    const postUrl = item.post || `posts/${item.id}.md`;
+    const posts = await getEntriesForSlug(section);
+    const item = posts.find(p => p.id === postId);
 
-    try {
-      const res = await fetch(postUrl, { cache: 'no-cache' });
-      if (res.ok) {
-        markdown = await res.text();
-      } else {
-        // Fall back to inline content if fetch fails (e.g. file is missing locally)
-        markdown = item.content || 'No content provided.';
-      }
-    } catch (e) {
-      markdown = item.content || 'No content provided.';
+    if (!item) {
+      blogPostContent.innerHTML = '<div class="blog-status">Error: Document metadata not found.</div>';
+      return;
     }
 
+    const markdown = item.content || '';
+    const postUrl = item.file;
+
+    // Set assetBase to the folder of the file (e.g. content/Tech) if not defined
+    const assetBase = postUrl.substring(0, postUrl.lastIndexOf('/'));
+    
+    // Always prepend the article title on top and strip any duplicate H1 inside content
+    let cleanMarkdown = markdown;
+    if (markdown.trim().startsWith('# ')) {
+      // Remove the first H1 line
+      cleanMarkdown = markdown.replace(/^\s*#\s+.*$/m, '');
+    }
+    
     // Render markdown content
-    const processedHtml = parseMarkdown(markdown, item.assetBase);
+    let processedHtml = parseMarkdown(cleanMarkdown, assetBase);
+    processedHtml = `<h1 class="blog-post-title" style="margin-top: 0; font-size: 32px; border-bottom: 1px solid var(--blog-border); padding-bottom: 8px; font-weight: 700; color: var(--blog-heading);">${item.title}</h1>${processedHtml}`;
+    
     blogPostContent.innerHTML = processedHtml;
+
+    // Inject date into the reader header (opposite the "Back to List" button)
+    const blogReadDate = document.getElementById('blog-read-date');
+    if (blogReadDate) {
+      blogReadDate.textContent = item.date || '';
+    }
 
     // Run highlight.js & KaTeX rendering pipeline
     decorateLinks(blogPostContent);
@@ -441,6 +749,7 @@ function highlightCode(root) {
   });
 }
 
+// Render math equations via KaTeX
 function renderEquations(root) {
   if (!window.renderMathInElement) return;
   window.renderMathInElement(root, {

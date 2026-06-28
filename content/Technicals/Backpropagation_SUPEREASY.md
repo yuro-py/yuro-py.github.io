@@ -1,3 +1,4 @@
+Date: 2026-APR-06
 We will learn backprop by skimming through what we already know about tensors in PyTorch.
 
 ```
