@@ -337,6 +337,21 @@ button {
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+.projects-header .btn-control {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--home-txt-muted);
+  box-shadow: none;
+  padding: 8px 14px;
+}
+
+.projects-header .btn-control:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  transform: none;
+}
+
 .projects-overlay-title {
   font-size: 22px;
   font-weight: 700;
