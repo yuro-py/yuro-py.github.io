@@ -1,0 +1,35 @@
+[
+  {
+    "id": "cognitive-sovereignty",
+    "label": "Philosophy",
+    "title": "Cognitive Sovereignty and AI",
+    "summary": "A framework for using AI as an amplifier while preserving craft integrity, moral agency, discernment, and epistemic independence.",
+    "tags": ["philosophy", "cognition", "ai-ethics"],
+    "post": "./posts/cognitive-sovereignty.md",
+    "links": [
+      {"label": "Archive", "url": "https://yuro-py.github.io"}
+    ]
+  },
+  {
+    "id": "portfolio-research-path",
+    "label": "Career",
+    "title": "Portfolio-Driven Research Path",
+    "summary": "A direct-outreach strategy built around public implementations, research notes, referrals, and proof of work.",
+    "tags": ["career", "research", "india"],
+    "post": "./posts/portfolio-research-path.md",
+    "links": [
+      {"label": "GitHub", "url": "https://github.com/yuro-py"}
+    ]
+  },
+  {
+    "id": "heavy-duty-training",
+    "label": "Fitness",
+    "title": "Heavy Duty Training Log",
+    "summary": "A concise training log built around high intensity, low volume, progressive overload, and explicit recovery tracking.",
+    "tags": ["fitness", "mentzer", "protocol"],
+    "post": "./posts/heavy-duty-training.md",
+    "links": [
+      {"label": "Archive", "url": "https://yuro-py.github.io"}
+    ]
+  }
+]
