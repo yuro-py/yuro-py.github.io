@@ -65,22 +65,55 @@ function init() {
   blogReadContainer = document.getElementById('blog-read-container');
   blogPostContent = document.getElementById('blog-post-content');
 
-  // Dynamic Background System: randomly select one of the WebM files shifted to the backgrounds/ folder
+  // Dynamic Background System: randomly select one of the WebM files from backgrounds/
   if (bgVideo) {
-    const backgrounds = [
+    let backgrounds = window.BACKGROUNDS || [
       'backgrounds/anime_boy_bed_rest_phone.webm',
       'backgrounds/batman_test.webm',
       'backgrounds/pinterest_gif_1782647478.webm',
       'backgrounds/cyberpunk_wire_trains.webm'
     ];
-    const randomBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
-    const sourceEl = bgVideo.querySelector('source');
-    if (sourceEl) {
-      sourceEl.src = randomBg;
-    } else {
-      bgVideo.src = randomBg;
-    }
-    bgVideo.load();
+
+    const loadRandomBg = (list) => {
+      const randomBg = list[Math.floor(Math.random() * list.length)];
+      const sourceEl = bgVideo.querySelector('source');
+      if (sourceEl) {
+        sourceEl.src = randomBg;
+      } else {
+        bgVideo.src = randomBg;
+      }
+      bgVideo.load();
+    };
+
+    // Load initial background immediately
+    loadRandomBg(backgrounds);
+
+    // Try to auto-detect new background files at runtime (useful for local development servers)
+    fetch('./backgrounds/')
+      .then(res => {
+        if (res.ok && res.headers.get('content-type')?.includes('text/html')) {
+          return res.text();
+        }
+        throw new Error('Not a directory listing');
+      })
+      .then(text => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/html');
+        const links = Array.from(doc.querySelectorAll('a'))
+          .map(a => a.getAttribute('href'))
+          .filter(href => href && href.endsWith('.webm'))
+          .map(href => {
+            const filename = href.split('/').pop();
+            return `backgrounds/${filename}`;
+          });
+        if (links.length > 0) {
+          backgrounds = Array.from(new Set(links));
+          console.log('[Backgrounds System] Runtime detected backgrounds:', backgrounds);
+        }
+      })
+      .catch(() => {
+        // Expected fallback on static hosts (like GitHub Pages)
+      });
   }
 
   // Apply saved theme
