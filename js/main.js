@@ -34,6 +34,15 @@ function init() {
     return;
   }
 
+  // Register Service Worker for PWA support
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then((reg) => console.log('[Service Worker] Registered successfully with scope:', reg.scope))
+        .catch((err) => console.error('[Service Worker] Registration failed:', err));
+    });
+  }
+
   // Query references dynamically to guarantee DOM is fully parsed
   homeView = document.getElementById('home-view');
   blogView = document.getElementById('blog-view');
@@ -56,15 +65,29 @@ function init() {
   blogReadContainer = document.getElementById('blog-read-container');
   blogPostContent = document.getElementById('blog-post-content');
 
-
+  // Dynamic Background System: randomly select one of the WebM files shifted to the backgrounds/ folder
+  if (bgVideo) {
+    const backgrounds = [
+      'backgrounds/anime_boy_bed_rest_phone.webm',
+      'backgrounds/batman_test.webm',
+      'backgrounds/pinterest_gif_1782647478.webm',
+      'backgrounds/cyberpunk_wire_trains.webm'
+    ];
+    const randomBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+    const sourceEl = bgVideo.querySelector('source');
+    if (sourceEl) {
+      sourceEl.src = randomBg;
+    } else {
+      bgVideo.src = randomBg;
+    }
+    bgVideo.load();
+  }
 
   // Apply saved theme
   applyTheme();
 
   // Bind all event listeners
   setupEventListeners();
-
-
 
   // Try to play background video on start
   if (bgVideo) {
