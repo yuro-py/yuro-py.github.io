@@ -1,0 +1,10 @@
+Drop your wallpaper image in this folder and name it exactly:
+
+    wallpaper.jpg
+
+That's it — the CSS already points at /assets/images/wallpaper.jpg.
+Delete this text file once you've added the real image.
+
+If you'd rather use a .png or .webp, open _includes/theme.html and
+change the filename in the `.wallpaper{ background-image: ... }`
+rule to match.

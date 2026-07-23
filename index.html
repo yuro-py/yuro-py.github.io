@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Yuro</title>
+<meta name="description" content="Yuro — math, reasoning.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,600;9..144,900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   THEME — every color / font lives here. Change once, applies
+   everywhere on the page.
+   ========================================================= */
+:root{
+  --ink:        #0a0e13;
+  --parchment:  #ece3cf;
+  --parchment-dim: #a89f88;
+  --brass:      #c9a24b;
+  --oxide:      #b3402f;
+  --line:       rgba(201,162,75,.35);
+  --scrim:      rgba(6,9,12,.60);
+  --scrim-strong: rgba(6,9,12,.86);
+  --font-display: 'Fraunces', ui-serif, Georgia, serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+}
+*{ box-sizing:border-box; }
+html, body{
+  margin:0; padding:0; height:100%; height:100dvh;
+  overflow:hidden;
+  background: var(--ink);
+  color: var(--parchment);
+  font-family: var(--font-mono);
+  -webkit-font-smoothing: antialiased;
+}
+a{ color: inherit; }
+
+/* drop your wallpaper at assets/images/wallpaper.jpg — relative
+   path on purpose, so this also works opened straight from disk */
+.wallpaper{
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(180deg, var(--scrim), var(--scrim-strong)),
+    url('assets/images/wallpaper.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  z-index: -2;
+}
+
+/* compass — the one signature flourish, kept quiet */
+.compass{
+  position: fixed; top: 1.5rem; right: 1.5rem;
+  width: 64px; height: 64px;
+  opacity: .45; z-index: 5; pointer-events: none;
+  animation: spin 140s linear infinite;
+}
+.compass path, .compass circle{ stroke: var(--brass); fill: none; stroke-width: 1; }
+.compass .dot{ fill: var(--brass); stroke: none; }
+@keyframes spin{ to{ transform: rotate(360deg); } }
+
+/* shared button language — brass ship-switches */
+.btn{
+  font-family: var(--font-mono);
+  font-size: .78rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--parchment);
+  background: transparent;
+  border: 1px solid var(--line);
+  padding: .85em 1.4em;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: .6em;
+  transition: border-color .25s ease, color .25s ease;
+}
+.btn:hover, .btn:focus-visible{ border-color: var(--oxide); color: var(--oxide); }
+.btn:focus-visible{ outline: 2px solid var(--oxide); outline-offset: 3px; }
+
+/* ============ HOMESCREEN — locked to one viewport, no scroll ============ */
+.stage{
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 6vh 6vw;
+}
+.id{ max-width: 720px; }
+.id .name{
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-optical-sizing: auto;
+  font-size: clamp(3.2rem, 11vw, 7.5rem);
+  line-height: .92;
+  margin: 0;
+  letter-spacing: .01em;
+  text-shadow: 0 -1px 1px rgba(255,255,255,.10), 0 2px 3px rgba(0,0,0,.65);
+}
+.id .vitals{
+  margin-top: .9rem;
+  font-size: .9rem;
+  letter-spacing: .28em;
+  color: var(--brass);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: .55em 0;
+  display: inline-flex;
+  gap: .8em;
+}
+.id .vitals .sep{ color: var(--parchment-dim); }
+.id .tags{
+  margin-top: 1rem;
+  font-size: .78rem;
+  letter-spacing: .3em;
+  color: var(--parchment-dim);
+}
+.id .tags .sep{ color: var(--line); margin: 0 .5em; }
+
+/* nav: brass switches, bottom-right on desktop */
+.nav{
+  position: fixed; right: 6vw; bottom: 6vh;
+  display: flex; flex-direction: column; align-items: flex-end;
+  gap: .85rem; z-index: 6;
+}
+.nav .btn{ min-width: 12rem; justify-content: space-between; }
+.nav .btn:nth-child(1){ animation: bob 5.5s ease-in-out 0s infinite; }
+.nav .btn:nth-child(2){ animation: bob 6.2s ease-in-out .4s infinite; }
+.nav .btn:nth-child(3){ animation: bob 5.8s ease-in-out .8s infinite; }
+@keyframes bob{ 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-4px);} }
+
+/* panels: chart unrolls up from the bottom */
+.panel{
+  position: fixed; inset: 0;
+  background: var(--scrim-strong);
+  backdrop-filter: blur(6px);
+  transform: translateY(100%);
+  transition: transform .5s cubic-bezier(.22,.8,.28,1);
+  z-index: 10;
+  display: flex; flex-direction: column;
+  padding: 6vh 6vw;
+}
+.panel.open{ transform: translateY(0); }
+.panel-head{
+  display: flex; align-items: baseline; justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 1rem;
+  flex-shrink: 0;
+}
+.panel-head h2{
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  margin: 0;
+  letter-spacing: .02em;
+}
+.panel-close{
+  font-family: var(--font-mono);
+  background: none; border: 1px solid var(--line); color: var(--parchment);
+  width: 2.4rem; height: 2.4rem; border-radius: 50%;
+  cursor: pointer; font-size: 1rem; line-height: 1;
+  transition: border-color .25s, color .25s;
+}
+.panel-close:hover, .panel-close:focus-visible{ border-color: var(--oxide); color: var(--oxide); }
+.panel-body{ overflow-y: auto; margin-top: 1.5rem; flex: 1; }
+
+/* project / writing rows — identical treatment, both are just link lists */
+.row-list{ list-style: none; margin: 0; padding: 0; }
+.row-list li{ border-bottom: 1px solid var(--line); }
+.row-list a.row{
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; padding: 1.1em .3em;
+  text-decoration: none; color: var(--parchment);
+  transition: color .2s, padding-left .2s;
+}
+.row-list a.row:hover, .row-list a.row:focus-visible{ color: var(--oxide); padding-left: .6em; }
+.row-title{ font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; }
+.row-meta{ display:flex; align-items:center; gap:1rem; flex-shrink:0; }
+.row-date{ font-size: .75rem; letter-spacing:.1em; color: var(--parchment-dim); white-space:nowrap; }
+.row-open{
+  font-size: .72rem; letter-spacing: .15em; color: var(--brass);
+  border: 1px solid var(--line); padding: .4em .8em; white-space:nowrap;
+}
+.row-list a.row:hover .row-open, .row-list a.row:focus-visible .row-open{ border-color: var(--oxide); color: var(--oxide); }
+
+/* socials */
+.socials{ display: flex; flex-wrap: wrap; gap: 1rem; }
+.social{
+  display:flex; align-items:center; gap:.7em;
+  border:1px solid var(--line); padding:.9em 1.3em;
+  text-decoration:none; color:var(--parchment);
+  font-size:.8rem; letter-spacing:.15em; text-transform:uppercase;
+  transition: border-color .2s, color .2s;
+}
+.social:hover, .social:focus-visible{ border-color: var(--oxide); color: var(--oxide); }
+.social svg{ width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.6; flex-shrink:0; }
+.social svg .eye{ fill: currentColor; stroke: none; }
+
+/* mobile */
+@media (max-width: 640px){
+  .stage{ justify-content: flex-start; padding-top: 12vh; }
+  .id .name{ font-size: clamp(2.6rem, 15vw, 4rem); }
+  .nav{
+    left: 5vw; right: 5vw; bottom: 4vh;
+    flex-direction: row; justify-content: space-between; align-items: stretch;
+  }
+  .nav .btn{ min-width: 0; flex: 1; padding: .8em .6em; font-size: .62rem; justify-content: center; gap:0; }
+  .panel{ padding: 8vh 6vw 4vh; }
+  .row-title{ font-size: 1rem; }
+  .compass{ width: 44px; height: 44px; top: 1rem; right: 1rem; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .compass, .nav .btn{ animation: none; }
+  *{ transition-duration: .001ms !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="wallpaper"></div>
+
+<svg class="compass" viewBox="0 0 64 64" aria-hidden="true">
+  <circle cx="32" cy="32" r="30"/>
+  <circle class="dot" cx="32" cy="32" r="1.5"/>
+  <path d="M32 4 L36 30 L32 34 L28 30 Z"/>
+  <path d="M32 2 V10 M32 54 V62 M2 32 H10 M54 32 H62"/>
+</svg>
+
+<main class="stage">
+  <div class="id">
+    <h1 class="name">YURO</h1>
+    <div class="vitals"><span>21M</span><span class="sep">·</span><span>6'1</span></div>
+    <div class="tags">MATH<span class="sep">/</span>REASONING</div>
+  </div>
+</main>
+
+<nav class="nav">
+  <button class="btn" data-open="projects" aria-expanded="false" aria-controls="panel-projects">Projects</button>
+  <button class="btn" data-open="writings" aria-expanded="false" aria-controls="panel-writings">Writings</button>
+  <button class="btn" data-open="socials"  aria-expanded="false" aria-controls="panel-socials">Socials</button>
+</nav>
+
+<!-- PROJECTS -->
+<section class="panel" id="panel-projects" role="dialog" aria-label="Projects">
+  <div class="panel-head">
+    <h2>Projects</h2>
+    <button class="panel-close" data-close aria-label="Close">&times;</button>
+  </div>
+  <div class="panel-body"><ul class="row-list" id="projects-list"></ul></div>
+</section>
+
+<!-- WRITINGS -->
+<section class="panel" id="panel-writings" role="dialog" aria-label="Writings">
+  <div class="panel-head">
+    <h2>Writings</h2>
+    <button class="panel-close" data-close aria-label="Close">&times;</button>
+  </div>
+  <div class="panel-body"><ul class="row-list" id="writings-list"></ul></div>
+</section>
+
+<!-- SOCIALS -->
+<section class="panel" id="panel-socials" role="dialog" aria-label="Socials">
+  <div class="panel-head">
+    <h2>Socials</h2>
+    <button class="panel-close" data-close aria-label="Close">&times;</button>
+  </div>
+  <div class="panel-body"><div class="socials" id="socials-list"></div></div>
+</section>
+
+<script>
+/* =========================================================
+   DATA — the only part of this file you should ever touch to
+   add content. Everything below CONFIG is just wiring.
+   ========================================================= */
+
+// One entry per project. Empty array = the panel shows nothing.
+const PROJECTS = [
+  // { title: "PTRM: Unified Tiny Recursive Model", link: "https://github.com/yuro-py/ptrm", date: "21-7-2026" },
+];
+
+// One entry per writing — hosted anywhere (Substack, Medium, a
+// Google Doc, another repo, wherever). `link` just redirects
+// there. Empty array = the panel shows nothing.
+const WRITINGS = [
+  { title: "a simple explanation of a transformer", link: "https://yuro-py.blogspot.com/2026/07/tf-is-transformer-transformers2007.html", date: "23-7-2026" },
+];
+
+// Leave any value blank/absent and that icon disappears.
+const SOCIALS = {
+  github:      "https://github.com/yuro-py",
+  twitter:     "https://x.com/your-handle",
+  linkedin:    "https://linkedin.com/in/your-handle",
+  huggingface: "https://huggingface.co/your-handle",
+  email:       "you@example.com", // becomes a mailto: link automatically
+};
+
+/* =========================================================
+   WIRING — you shouldn't need to touch anything below this.
+   ========================================================= */
+const ICONS = {
+  github: '<path d="M16 2C8.3 2 2 8.3 2 16c0 6.2 4 11.4 9.6 13.3.7.1 1-.3 1-.7v-2.5c-3.9.8-4.7-1.7-4.7-1.7-.6-1.6-1.5-2-1.5-2-1.3-.9.1-.9.1-.9 1.4.1 2.1 1.4 2.1 1.4 1.3 2.1 3.3 1.5 4.1 1.2.1-.9.5-1.5.9-1.9-3.1-.3-6.4-1.5-6.4-6.8 0-1.5.5-2.7 1.4-3.7-.1-.3-.6-1.7.1-3.6 0 0 1.1-.4 3.7 1.4 1.1-.3 2.2-.4 3.4-.4s2.3.1 3.4.4c2.6-1.7 3.7-1.4 3.7-1.4.7 1.9.3 3.3.1 3.6.9 1 1.4 2.2 1.4 3.7 0 5.3-3.3 6.5-6.4 6.8.5.4 1 1.3 1 2.6v3.8c0 .4.3.8 1 .7C26 27.4 30 22.2 30 16 30 8.3 23.7 2 16 2z"/>',
+  x: '<path d="M4 4l24 24M28 4L4 28"/>',
+  linkedin: '<rect x="4" y="11" width="5" height="17"/><circle cx="6.5" cy="6" r="2.2"/><path d="M14 28V11h5v2.5C20 11.5 22 11 24 11c3 0 5 2 5 6v11h-5V18c0-2-1-3-2.5-3S19 16 19 18v10z"/>',
+  huggingface: '<circle cx="16" cy="16" r="13"/><circle class="eye" cx="11.5" cy="14" r="1.4"/><circle class="eye" cx="20.5" cy="14" r="1.4"/><path d="M11 20c1.6 1.4 3.2 2 5 2s3.4-.6 5-2"/>',
+  email: '<rect x="3" y="7" width="26" height="18" rx="1"/><path d="M4 8l12 10L28 8"/>'
+};
+
+function el(tag, cls, html){
+  const e = document.createElement(tag);
+  if(cls) e.className = cls;
+  if(html !== undefined) e.innerHTML = html;
+  return e;
+}
+
+function renderLinkList(listId, items){
+  const list = document.getElementById(listId);
+  (items || []).forEach(item => {
+    const li = el('li');
+    const a = el('a', 'row');
+    a.href = item.link; a.target = '_blank'; a.rel = 'noopener';
+    const title = el('span', 'row-title'); title.textContent = item.title;
+    const meta = el('span', 'row-meta');
+    const date = el('span', 'row-date'); date.textContent = item.date;
+    const open = el('span', 'row-open'); open.textContent = 'Open';
+    meta.append(date, open);
+    a.append(title, meta);
+    li.append(a);
+    list.append(li);
+  });
+}
+
+function renderSocials(){
+  const wrap = document.getElementById('socials-list');
+  const order = [
+    ['github', 'GitHub', SOCIALS.github],
+    ['x', 'Twitter / X', SOCIALS.twitter],
+    ['linkedin', 'LinkedIn', SOCIALS.linkedin],
+    ['huggingface', 'HuggingFace', SOCIALS.huggingface],
+    ['email', 'Email', SOCIALS.email ? 'mailto:' + SOCIALS.email : null],
+  ];
+  order.forEach(([key, label, href]) => {
+    if(!href) return;
+    const a = el('a', 'social');
+    a.href = href;
+    if(key !== 'email'){ a.target = '_blank'; a.rel = 'noopener'; }
+    a.setAttribute('aria-label', label);
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('viewBox','0 0 32 32');
+    svg.innerHTML = ICONS[key];
+    a.appendChild(svg);
+    const span = el('span'); span.textContent = label;
+    a.appendChild(span);
+    wrap.appendChild(a);
+  });
+}
+
+renderLinkList('projects-list', PROJECTS);
+renderLinkList('writings-list', WRITINGS);
+renderSocials();
+
+// ---- panel open/close ----
+const panels = {
+  projects: document.getElementById('panel-projects'),
+  writings: document.getElementById('panel-writings'),
+  socials:  document.getElementById('panel-socials'),
+};
+let openName = null;
+function openPanel(name){
+  if(openName) closePanel();
+  panels[name].classList.add('open');
+  const btn = document.querySelector(`[data-open="${name}"]`);
+  if(btn) btn.setAttribute('aria-expanded','true');
+  openName = name;
+}
+function closePanel(){
+  if(!openName) return;
+  panels[openName].classList.remove('open');
+  const btn = document.querySelector(`[data-open="${openName}"]`);
+  if(btn) btn.setAttribute('aria-expanded','false');
+  openName = null;
+}
+document.querySelectorAll('.nav [data-open]').forEach(b => b.addEventListener('click', () => openPanel(b.dataset.open)));
+document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closePanel));
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closePanel(); });
+</script>
+</body>
+</html>
