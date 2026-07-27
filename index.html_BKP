@@ -7,239 +7,261 @@
 <meta name="description" content="Yuro — math, reasoning.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,600;9..144,900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* =========================================================
-   THEME — every color / font lives here. Change once, applies
-   everywhere on the page.
+   THEME — every color / font lives here. Mood: quiet, ancient,
+   dominant — ash and ember against a void. No gold, no shine.
    ========================================================= */
 :root{
-  --ink:        #0a0e13;
-  --parchment:  #ece3cf;
-  --parchment-dim: #a89f88;
-  --brass:      #c9a24b;
-  --oxide:      #b3402f;
-  --line:       rgba(201,162,75,.35);
-  --scrim:      rgba(6,9,12,.60);
-  --scrim-strong: rgba(6,9,12,.86);
-  --font-display: 'Fraunces', ui-serif, Georgia, serif;
-  --font-mono:    'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --void:        #060606;
+  --ash:         #d9d5cb;
+  --ash-dim:     #8b877d;
+  --iron:        #6b6660;
+  --ember:       #7a1f1c;
+  --ember-bright:#a6302b;
+  --line:        rgba(217,213,203,.14);
+  --font-display: 'Playfair Display', ui-serif, Georgia, serif;
+  --font-ui:      'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 *{ box-sizing:border-box; }
 html, body{
   margin:0; padding:0; height:100%; height:100dvh;
   overflow:hidden;
-  background: var(--ink);
-  color: var(--parchment);
-  font-family: var(--font-mono);
+  background: var(--void);
+  color: var(--ash);
+  font-family: var(--font-ui);
   -webkit-font-smoothing: antialiased;
 }
 a{ color: inherit; }
 
-/* drop your wallpaper at assets/images/wallpaper.jpg — relative
-   path on purpose, so this also works opened straight from disk */
+/* wallpaper — scrim is a left-to-right gradient on desktop
+   (dark where the text sits, clear on the right so the image
+   actually shows), top-to-bottom on mobile. Filled in by JS
+   from the WALLPAPERS list below, not hardcoded here. */
 .wallpaper{
   position: fixed; inset: 0;
-  background-image:
-    linear-gradient(180deg, var(--scrim), var(--scrim-strong)),
-    url('assets/images/wallpaper.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
+  z-index: -3;
+  transition: background-image .6s ease;
+}
+.wallpaper-scrim{
+  position: fixed; inset: 0;
   z-index: -2;
+  background: linear-gradient(90deg, rgba(3,3,3,.90) 0%, rgba(3,3,3,.78) 32%, rgba(3,3,3,.35) 62%, rgba(3,3,3,.12) 100%);
 }
 
-/* compass — the one signature flourish, kept quiet */
-.compass{
-  position: fixed; top: 1.5rem; right: 1.5rem;
-  width: 64px; height: 64px;
-  opacity: .45; z-index: 5; pointer-events: none;
-  animation: spin 140s linear infinite;
-}
-.compass path, .compass circle{ stroke: var(--brass); fill: none; stroke-width: 1; }
-.compass .dot{ fill: var(--brass); stroke: none; }
-@keyframes spin{ to{ transform: rotate(360deg); } }
-
-/* shared button language — brass ship-switches */
+/* shared button/link language — quiet iron hairline, ember on hover */
 .btn{
-  font-family: var(--font-mono);
-  font-size: .78rem;
-  letter-spacing: .18em;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: .72rem;
+  letter-spacing: .16em;
   text-transform: uppercase;
-  color: var(--parchment);
+  color: var(--ash);
   background: transparent;
-  border: 1px solid var(--line);
-  padding: .85em 1.4em;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  padding: .7em 0;
   cursor: pointer;
   text-decoration: none;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: .6em;
-  transition: border-color .25s ease, color .25s ease;
+  justify-content: space-between;
+  gap: 1.5em;
+  width: 100%;
+  transition: color .2s ease, border-color .2s ease, padding-left .2s ease;
 }
-.btn:hover, .btn:focus-visible{ border-color: var(--oxide); color: var(--oxide); }
-.btn:focus-visible{ outline: 2px solid var(--oxide); outline-offset: 3px; }
+.btn:hover, .btn:focus-visible{ color: var(--ember-bright); border-color: var(--ember); padding-left: .4em; }
+.btn:focus-visible{ outline: 1px solid var(--ember-bright); outline-offset: 4px; }
+.btn .arrow{ opacity: 0; transition: opacity .2s ease; font-size: .9em; }
+.btn:hover .arrow, .btn:focus-visible .arrow{ opacity: 1; }
 
-/* ============ HOMESCREEN — locked to one viewport, no scroll ============ */
+/* ============ HOMESCREEN — one viewport, no scroll ============ */
 .stage{
   position: fixed; inset: 0;
-  display: flex; flex-direction: column; justify-content: center;
-  padding: 6vh 6vw;
+  display: flex; align-items: center;
+  padding: 6vh 7vw;
 }
-.id{ max-width: 720px; }
+.left-col{ max-width: 400px; width: 100%; }
+
+.id{ margin-bottom: 3.2rem; }
 .id .name{
   font-family: var(--font-display);
-  font-weight: 900;
-  font-optical-sizing: auto;
-  font-size: clamp(3.2rem, 11vw, 7.5rem);
-  line-height: .92;
+  font-weight: 700;
+  font-size: clamp(1.9rem, 3.4vw, 2.6rem);
+  line-height: 1;
   margin: 0;
-  letter-spacing: .01em;
-  text-shadow: 0 -1px 1px rgba(255,255,255,.10), 0 2px 3px rgba(0,0,0,.65);
+  letter-spacing: .015em;
 }
 .id .vitals{
-  margin-top: .9rem;
-  font-size: .9rem;
-  letter-spacing: .28em;
-  color: var(--brass);
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  padding: .55em 0;
-  display: inline-flex;
-  gap: .8em;
-}
-.id .vitals .sep{ color: var(--parchment-dim); }
-.id .tags{
-  margin-top: 1rem;
+  margin-top: .8rem;
   font-size: .78rem;
+  font-weight: 500;
+  letter-spacing: .18em;
+  color: var(--ash-dim);
+  display: inline-flex;
+  gap: .7em;
+}
+.id .vitals .sep{ color: var(--iron); }
+.id .tags{
+  margin-top: .6rem;
+  font-size: .68rem;
+  font-weight: 500;
   letter-spacing: .3em;
-  color: var(--parchment-dim);
+  text-transform: uppercase;
+  color: var(--iron);
 }
-.id .tags .sep{ color: var(--line); margin: 0 .5em; }
+.id .tags .sep{ margin: 0 .5em; }
 
-/* nav: brass switches, bottom-right on desktop */
-.nav{
-  position: fixed; right: 6vw; bottom: 6vh;
-  display: flex; flex-direction: column; align-items: flex-end;
-  gap: .85rem; z-index: 6;
-}
-.nav .btn{ min-width: 12rem; justify-content: space-between; }
-.nav .btn:nth-child(1){ animation: bob 5.5s ease-in-out 0s infinite; }
-.nav .btn:nth-child(2){ animation: bob 6.2s ease-in-out .4s infinite; }
-.nav .btn:nth-child(3){ animation: bob 5.8s ease-in-out .8s infinite; }
-@keyframes bob{ 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-4px);} }
+.nav{ display: flex; flex-direction: column; }
 
-/* panels: chart unrolls up from the bottom */
+/* panels: quiet fade + slight rise, no bounce */
 .panel{
   position: fixed; inset: 0;
-  background: var(--scrim-strong);
-  backdrop-filter: blur(6px);
-  transform: translateY(100%);
-  transition: transform .5s cubic-bezier(.22,.8,.28,1);
+  background: rgba(4,4,4,.94);
+  backdrop-filter: blur(10px);
+  opacity: 0; visibility: hidden;
+  transform: translateY(10px);
+  transition: opacity .35s ease, transform .35s ease, visibility 0s linear .35s;
   z-index: 10;
   display: flex; flex-direction: column;
-  padding: 6vh 6vw;
+  padding: 6vh 7vw;
 }
-.panel.open{ transform: translateY(0); }
+.panel.open{
+  opacity: 1; visibility: visible; transform: translateY(0);
+  transition: opacity .35s ease, transform .35s ease;
+}
 .panel-head{
   display: flex; align-items: baseline; justify-content: space-between;
   border-bottom: 1px solid var(--line);
-  padding-bottom: 1rem;
+  padding-bottom: 1.1rem;
   flex-shrink: 0;
 }
 .panel-head h2{
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 700;
+  font-size: clamp(1.4rem, 3vw, 1.9rem);
   margin: 0;
-  letter-spacing: .02em;
 }
 .panel-close{
-  font-family: var(--font-mono);
-  background: none; border: 1px solid var(--line); color: var(--parchment);
-  width: 2.4rem; height: 2.4rem; border-radius: 50%;
+  font-family: var(--font-ui);
+  background: none; border: 1px solid var(--line); color: var(--ash);
+  width: 2.2rem; height: 2.2rem; border-radius: 50%;
   cursor: pointer; font-size: 1rem; line-height: 1;
-  transition: border-color .25s, color .25s;
+  transition: border-color .2s, color .2s;
+  flex-shrink: 0;
 }
-.panel-close:hover, .panel-close:focus-visible{ border-color: var(--oxide); color: var(--oxide); }
-.panel-body{ overflow-y: auto; margin-top: 1.5rem; flex: 1; }
+.panel-close:hover, .panel-close:focus-visible{ border-color: var(--ember-bright); color: var(--ember-bright); }
+.panel-body{ overflow-y: auto; margin-top: 1.4rem; flex: 1; max-width: 620px; }
 
-/* project / writing rows — identical treatment, both are just link lists */
+/* project / writing rows */
 .row-list{ list-style: none; margin: 0; padding: 0; }
 .row-list li{ border-bottom: 1px solid var(--line); }
-.row-list a.row{
+.row-list a.row, .row-list button.row{
   display: flex; align-items: center; justify-content: space-between;
-  gap: 1rem; padding: 1.1em .3em;
-  text-decoration: none; color: var(--parchment);
+  gap: 1rem; padding: 1.1em .2em;
+  text-decoration: none; color: var(--ash);
+  background: none; border: none; text-align: left; width: 100%;
+  font-family: inherit; cursor: pointer;
   transition: color .2s, padding-left .2s;
 }
-.row-list a.row:hover, .row-list a.row:focus-visible{ color: var(--oxide); padding-left: .6em; }
-.row-title{ font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; }
+.row-list a.row:hover, .row-list a.row:focus-visible,
+.row-list button.row:hover, .row-list button.row:focus-visible{ color: var(--ember-bright); padding-left: .5em; }
+.row-title{ font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; }
 .row-meta{ display:flex; align-items:center; gap:1rem; flex-shrink:0; }
-.row-date{ font-size: .75rem; letter-spacing:.1em; color: var(--parchment-dim); white-space:nowrap; }
+.row-date{ font-size: .7rem; letter-spacing:.08em; color: var(--ash-dim); white-space:nowrap; }
 .row-open{
-  font-size: .72rem; letter-spacing: .15em; color: var(--brass);
+  font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; color: var(--iron);
   border: 1px solid var(--line); padding: .4em .8em; white-space:nowrap;
 }
-.row-list a.row:hover .row-open, .row-list a.row:focus-visible .row-open{ border-color: var(--oxide); color: var(--oxide); }
+.row-list a.row:hover .row-open, .row-list a.row:focus-visible .row-open,
+.row-list button.row:hover .row-open, .row-list button.row:focus-visible .row-open{ border-color: var(--ember-bright); color: var(--ember-bright); }
 
 /* socials */
-.socials{ display: flex; flex-wrap: wrap; gap: 1rem; }
+.socials{ display: flex; flex-wrap: wrap; gap: .9rem; }
 .social{
   display:flex; align-items:center; gap:.7em;
-  border:1px solid var(--line); padding:.9em 1.3em;
-  text-decoration:none; color:var(--parchment);
-  font-size:.8rem; letter-spacing:.15em; text-transform:uppercase;
+  border:1px solid var(--line); padding:.85em 1.2em;
+  text-decoration:none; color:var(--ash);
+  font-size:.72rem; font-weight:500; letter-spacing:.12em; text-transform:uppercase;
   transition: border-color .2s, color .2s;
 }
-.social:hover, .social:focus-visible{ border-color: var(--oxide); color: var(--oxide); }
-.social svg{ width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.6; flex-shrink:0; }
+.social:hover, .social:focus-visible{ border-color: var(--ember-bright); color: var(--ember-bright); }
+.social svg{ width:17px; height:17px; stroke:currentColor; fill:none; stroke-width:1.6; flex-shrink:0; }
 .social svg .eye{ fill: currentColor; stroke: none; }
+
+/* ---- reader overlay: local .md articles render here ---- */
+.reader{
+  position: fixed; inset: 0;
+  background: rgba(3,3,3,.97);
+  z-index: 20;
+  opacity: 0; visibility: hidden;
+  transition: opacity .3s ease, visibility 0s linear .3s;
+  display: flex; justify-content: center;
+  overflow-y: auto;
+  padding: 8vh 6vw 10vh;
+}
+.reader.open{ opacity: 1; visibility: visible; transition: opacity .3s ease; }
+.reader-inner{ max-width: 680px; width: 100%; }
+.reader-back{ margin-bottom: 2.5rem; }
+.reader-inner h1.r-title{
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(1.7rem, 4vw, 2.4rem); margin: 0 0 .5rem; line-height: 1.15;
+}
+.reader-inner .r-date{
+  display:block; font-size:.7rem; letter-spacing:.16em; text-transform:uppercase;
+  color: var(--ash-dim); border-bottom: 1px solid var(--line);
+  padding-bottom: 1.6rem; margin-bottom: 1.8rem;
+}
+.r-content{ font-size: 1.02rem; line-height: 1.75; }
+.r-content img{ max-width: 100%; height: auto; border: 1px solid var(--line); margin: 1em 0; }
+.r-content h1, .r-content h2, .r-content h3{ font-family: var(--font-display); font-weight: 700; margin-top: 1.8em; }
+.r-content a{ color: var(--ember-bright); }
+.r-content pre{ background: rgba(255,255,255,.04); padding: 1em; overflow-x: auto; border: 1px solid var(--line); font-size:.85em; }
+.r-content code{ font-family: ui-monospace, monospace; font-size: .9em; }
+.r-content blockquote{ border-left: 2px solid var(--ember); margin: 1.4em 0; padding-left: 1.2em; color: var(--ash-dim); }
+.r-content ul, .r-content ol{ padding-left: 1.4em; }
+.r-error{
+  border: 1px solid var(--ember); padding: 1.2em; font-size: .88rem; line-height: 1.6; color: var(--ash-dim);
+}
+.r-error strong{ color: var(--ember-bright); }
 
 /* mobile */
 @media (max-width: 640px){
-  .stage{ justify-content: flex-start; padding-top: 12vh; }
-  .id .name{ font-size: clamp(2.6rem, 15vw, 4rem); }
-  .nav{
-    left: 5vw; right: 5vw; bottom: 4vh;
-    flex-direction: row; justify-content: space-between; align-items: stretch;
-  }
-  .nav .btn{ min-width: 0; flex: 1; padding: .8em .6em; font-size: .62rem; justify-content: center; gap:0; }
+  .wallpaper-scrim{ background: linear-gradient(180deg, rgba(3,3,3,.90) 0%, rgba(3,3,3,.75) 45%, rgba(3,3,3,.5) 100%); }
+  .stage{ align-items: flex-start; padding-top: 11vh; }
+  .left-col{ max-width: 100%; }
   .panel{ padding: 8vh 6vw 4vh; }
-  .row-title{ font-size: 1rem; }
-  .compass{ width: 44px; height: 44px; top: 1rem; right: 1rem; }
+  .reader{ padding: 8vh 6vw 6vh; }
 }
 
 @media (prefers-reduced-motion: reduce){
-  .compass, .nav .btn{ animation: none; }
   *{ transition-duration: .001ms !important; }
 }
 </style>
 </head>
 <body>
 
-<div class="wallpaper"></div>
-
-<svg class="compass" viewBox="0 0 64 64" aria-hidden="true">
-  <circle cx="32" cy="32" r="30"/>
-  <circle class="dot" cx="32" cy="32" r="1.5"/>
-  <path d="M32 4 L36 30 L32 34 L28 30 Z"/>
-  <path d="M32 2 V10 M32 54 V62 M2 32 H10 M54 32 H62"/>
-</svg>
+<div class="wallpaper" id="wallpaper"></div>
+<div class="wallpaper-scrim"></div>
 
 <main class="stage">
-  <div class="id">
-    <h1 class="name">YURO</h1>
-    <div class="vitals"><span>21M</span><span class="sep">·</span><span>6'1</span></div>
-    <div class="tags">MATH<span class="sep">/</span>REASONING</div>
+  <div class="left-col">
+    <div class="id">
+      <h1 class="name">Yuro</h1>
+      <div class="vitals"><span>21M</span><span class="sep">·</span><span>6'1</span></div>
+      <div class="tags">Math<span class="sep">/</span>Reasoning</div>
+    </div>
+    <nav class="nav">
+      <button class="btn" data-open="projects" aria-expanded="false" aria-controls="panel-projects">Projects <span class="arrow">→</span></button>
+      <button class="btn" data-open="writings" aria-expanded="false" aria-controls="panel-writings">Writings <span class="arrow">→</span></button>
+      <button class="btn" data-open="socials"  aria-expanded="false" aria-controls="panel-socials">Socials <span class="arrow">→</span></button>
+    </nav>
   </div>
 </main>
-
-<nav class="nav">
-  <button class="btn" data-open="projects" aria-expanded="false" aria-controls="panel-projects">Projects</button>
-  <button class="btn" data-open="writings" aria-expanded="false" aria-controls="panel-writings">Writings</button>
-  <button class="btn" data-open="socials"  aria-expanded="false" aria-controls="panel-socials">Socials</button>
-</nav>
 
 <!-- PROJECTS -->
 <section class="panel" id="panel-projects" role="dialog" aria-label="Projects">
@@ -268,22 +290,50 @@ a{ color: inherit; }
   <div class="panel-body"><div class="socials" id="socials-list"></div></div>
 </section>
 
+<!-- READER — local .md writings render in here, in-page -->
+<div class="reader" id="reader" role="dialog" aria-label="Article">
+  <div class="reader-inner">
+    <button class="btn reader-back" data-reader-close>&larr; Back <span class="arrow">→</span></button>
+    <h1 class="r-title" id="reader-title"></h1>
+    <span class="r-date" id="reader-date"></span>
+    <div class="r-content" id="reader-content"></div>
+  </div>
+</div>
+
 <script>
 /* =========================================================
-   DATA — the only part of this file you should ever touch to
-   add content. Everything below CONFIG is just wiring.
+   DATA — the only part of this file you should touch to add
+   content. Everything below WIRING is just plumbing.
    ========================================================= */
+
+// Wallpapers, in the order you want them to rotate. Filenames
+// only (case-sensitive), living in assets/images/. Advances by
+// one on every reload/visit and remembers its place — see
+// pickWallpaper() below if you ever want to change the scheme.
+const WALLPAPERS = [
+  "wallpaper.jpeg",
+  // "wallpaper-2.jpg",
+  // "wallpaper-3.png",
+];
 
 // One entry per project. Empty array = the panel shows nothing.
 const PROJECTS = [
-  // { title: "PTRM: Unified Tiny Recursive Model", link: "https://github.com/yuro-py/ptrm", date: "21-7-2026" },
+  { title: "PAPER : \"Attention is all you need\" in PyTorch", link: "https://github.com/yuro-py/attention_is_all_you_need", date: "23-7-2026" },
+  { title: "\"KV cache\" in PyTorch", link: "https://github.com/yuro-py/KV-cache", date: "27-7-2026" },
+  // { title: "PAPER : \"Attention is all you need\" in PyTorch", link: "https://github.com/yuro-py/attention_is_all_you_need", date: "23-7-2026" },
 ];
 
-// One entry per writing — hosted anywhere (Substack, Medium, a
-// Google Doc, another repo, wherever). `link` just redirects
-// there. Empty array = the panel shows nothing.
+// One entry per writing. `link` can be either:
+//   - a normal URL (opens in a new tab), or
+//   - a path to a local .md file (renders inside this page)
+// A local path can be absolute ("/Users/yuro/Documents/folio/writings/post.md"),
+// or relative to this file ("writings/post.md"). It must end in .md
+// to be treated as local. Home-folder shortcuts like "~/..." won't
+// work — browsers can't expand "~"; use the real full path.
 const WRITINGS = [
-  { title: "a simple explanation of a transformer", link: "https://yuro-py.blogspot.com/2026/07/tf-is-transformer-transformers2007.html", date: "23-7-2026" },
+  { title: "Transformer Architecture, 2017", link: "https://yuro-py.blogspot.com/2026/07/tf-is-transformer-transformers2007.html", date: "23-7-2026" },
+  { title: "KV cache with Multi-head Attention", link: "https://yuro-py.blogspot.com/2026/07/kv-cache-introduction-models-which-are.html", date: "27-7-2026" },
+  // { title: "Notes on tiny recursive models", link: "/Users/yuro/Documents/folio/writings/trm-notes.md", date: "20-7-2026" },
 ];
 
 // Leave any value blank/absent and that icon disappears.
@@ -292,17 +342,32 @@ const SOCIALS = {
   twitter:     "https://x.com/yur_o_0",
   linkedin:    "https://www.linkedin.com/in/yuro-py/",
   huggingface: "https://huggingface.co/yuro-py",
+  blogger:     "https://yuro-py.blogspot.com/",
   email:       "yuroxebec@gmail.com", // becomes a mailto: link automatically
 };
 
 /* =========================================================
    WIRING — you shouldn't need to touch anything below this.
    ========================================================= */
+
+// ---- wallpaper rotation (deterministic, not random) ----
+function pickWallpaper(){
+  const el = document.getElementById('wallpaper');
+  if(!WALLPAPERS.length) return;
+  let i = parseInt(localStorage.getItem('folio-wallpaper-idx') || '0', 10);
+  if(isNaN(i) || i < 0 || i >= WALLPAPERS.length) i = 0;
+  el.style.backgroundImage = `url('assets/images/${WALLPAPERS[i]}')`;
+  localStorage.setItem('folio-wallpaper-idx', (i + 1) % WALLPAPERS.length);
+}
+pickWallpaper();
+
+// ---- icons ----
 const ICONS = {
   github: '<path d="M16 2C8.3 2 2 8.3 2 16c0 6.2 4 11.4 9.6 13.3.7.1 1-.3 1-.7v-2.5c-3.9.8-4.7-1.7-4.7-1.7-.6-1.6-1.5-2-1.5-2-1.3-.9.1-.9.1-.9 1.4.1 2.1 1.4 2.1 1.4 1.3 2.1 3.3 1.5 4.1 1.2.1-.9.5-1.5.9-1.9-3.1-.3-6.4-1.5-6.4-6.8 0-1.5.5-2.7 1.4-3.7-.1-.3-.6-1.7.1-3.6 0 0 1.1-.4 3.7 1.4 1.1-.3 2.2-.4 3.4-.4s2.3.1 3.4.4c2.6-1.7 3.7-1.4 3.7-1.4.7 1.9.3 3.3.1 3.6.9 1 1.4 2.2 1.4 3.7 0 5.3-3.3 6.5-6.4 6.8.5.4 1 1.3 1 2.6v3.8c0 .4.3.8 1 .7C26 27.4 30 22.2 30 16 30 8.3 23.7 2 16 2z"/>',
   x: '<path d="M4 4l24 24M28 4L4 28"/>',
   linkedin: '<rect x="4" y="11" width="5" height="17"/><circle cx="6.5" cy="6" r="2.2"/><path d="M14 28V11h5v2.5C20 11.5 22 11 24 11c3 0 5 2 5 6v11h-5V18c0-2-1-3-2.5-3S19 16 19 18v10z"/>',
   huggingface: '<circle cx="16" cy="16" r="13"/><circle class="eye" cx="11.5" cy="14" r="1.4"/><circle class="eye" cx="20.5" cy="14" r="1.4"/><path d="M11 20c1.6 1.4 3.2 2 5 2s3.4-.6 5-2"/>',
+  blogger: '<path d="M14.5 3C11.5 3 9 5.5 9 8.5v9c0 3 2.5 5.5 5.5 5.5h5c3 0 5.5-2.5 5.5-5.5v-5.5c0-1-.8-1.8-1.8-1.8H22c-.7 0-1.2-.5-1.2-1.2V8.5C20.8 5.5 18.3 3 15.3 3h-.8zm.3 4.5h3.5c.8 0 1.5.7 1.5 1.5v3.5c0 .8-.7 1.5-1.5 1.5h-3.5c-.8 0-1.5-.7-1.5-1.5V9c0-.8.7-1.5 1.5-1.5z"/>',
   email: '<rect x="3" y="7" width="26" height="18" rx="1"/><path d="M4 8l12 10L28 8"/>'
 };
 
@@ -313,19 +378,42 @@ function el(tag, cls, html){
   return e;
 }
 
-function renderLinkList(listId, items){
-  const list = document.getElementById(listId);
-  (items || []).forEach(item => {
+function isLocalMd(link){
+  return typeof link === 'string' && /\.md$/i.test(link.trim());
+}
+
+function renderProjects(){
+  const list = document.getElementById('projects-list');
+  (PROJECTS || []).forEach(p => {
     const li = el('li');
     const a = el('a', 'row');
-    a.href = item.link; a.target = '_blank'; a.rel = 'noopener';
-    const title = el('span', 'row-title'); title.textContent = item.title;
+    a.href = p.link; a.target = '_blank'; a.rel = 'noopener';
+    const title = el('span', 'row-title'); title.textContent = p.title;
     const meta = el('span', 'row-meta');
-    const date = el('span', 'row-date'); date.textContent = item.date;
+    const date = el('span', 'row-date'); date.textContent = p.date;
     const open = el('span', 'row-open'); open.textContent = 'Open';
     meta.append(date, open);
     a.append(title, meta);
     li.append(a);
+    list.append(li);
+  });
+}
+
+function renderWritings(){
+  const list = document.getElementById('writings-list');
+  (WRITINGS || []).forEach(w => {
+    const li = el('li');
+    const local = isLocalMd(w.link);
+    const row = local ? el('button', 'row') : el('a', 'row');
+    if(!local){ row.href = w.link; row.target = '_blank'; row.rel = 'noopener'; }
+    const title = el('span', 'row-title'); title.textContent = w.title;
+    const meta = el('span', 'row-meta');
+    const date = el('span', 'row-date'); date.textContent = w.date;
+    const open = el('span', 'row-open'); open.textContent = local ? 'Read' : 'Open';
+    meta.append(date, open);
+    row.append(title, meta);
+    if(local) row.addEventListener('click', () => openReader(w));
+    li.append(row);
     list.append(li);
   });
 }
@@ -355,8 +443,8 @@ function renderSocials(){
   });
 }
 
-renderLinkList('projects-list', PROJECTS);
-renderLinkList('writings-list', WRITINGS);
+renderProjects();
+renderWritings();
 renderSocials();
 
 // ---- panel open/close ----
@@ -382,7 +470,110 @@ function closePanel(){
 }
 document.querySelectorAll('.nav [data-open]').forEach(b => b.addEventListener('click', () => openPanel(b.dataset.open)));
 document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closePanel));
-document.addEventListener('keydown', e => { if(e.key === 'Escape') closePanel(); });
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Escape') return;
+  if(document.getElementById('reader').classList.contains('open')) closeReader();
+  else closePanel();
+});
+
+// ---- reader: fetches + renders a local .md file in-page ----
+function toFetchable(p){
+  p = p.trim();
+  if(/^(https?|file):\/\//i.test(p)) return p;
+  if(p.startsWith('~')) return null; // can't resolve, browsers don't expand ~
+  if(/^[a-zA-Z]:[\\/]/.test(p)) return 'file:///' + p.replace(/\\/g,'/'); // C:\...
+  if(p.startsWith('/')) return 'file://' + p; // unix absolute
+  return p; // relative to this page
+}
+
+function baseDirOf(fetchable){
+  const i = fetchable.lastIndexOf('/');
+  return i === -1 ? '' : fetchable.slice(0, i + 1);
+}
+
+// deliberately small — headings, bold/italic, inline code, code
+// fences, images, links, blockquotes, lists, paragraphs. Enough
+// for a personal writing, not a full CommonMark implementation.
+function renderMarkdown(src, baseDir){
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const resolveSrc = s => /^(https?:|data:|file:)/i.test(s) ? s : baseDir + s;
+
+  const lines = src.replace(/\r\n/g,'\n').split('\n');
+  let html = '';
+  let inCode = false, codeBuf = [];
+  let para = [];
+
+  function flushPara(){
+    if(!para.length) return;
+    let t = esc(para.join(' '));
+    t = t.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (m,a,s)=>`<img alt="${a}" src="${resolveSrc(s)}">`);
+    t = t.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    t = t.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    t = t.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    t = t.replace(/`([^`]+)`/g, '<code>$1</code>');
+    html += `<p>${t}</p>`;
+    para = [];
+  }
+
+  let listBuf = [], inList = false;
+  function flushList(){
+    if(!inList) return;
+    html += '<ul>' + listBuf.map(i => `<li>${i}</li>`).join('') + '</ul>';
+    listBuf = []; inList = false;
+  }
+
+  for(const raw of lines){
+    if(raw.trim().startsWith('```')){
+      if(inCode){ html += `<pre><code>${esc(codeBuf.join('\n'))}</code></pre>`; codeBuf = []; inCode = false; }
+      else { flushPara(); flushList(); inCode = true; }
+      continue;
+    }
+    if(inCode){ codeBuf.push(raw); continue; }
+
+    const h = raw.match(/^(#{1,3})\s+(.*)/);
+    if(h){ flushPara(); flushList(); html += `<h${h[1].length}>${esc(h[2])}</h${h[1].length}>`; continue; }
+
+    const bq = raw.match(/^>\s?(.*)/);
+    if(bq){ flushPara(); flushList(); html += `<blockquote>${esc(bq[1])}</blockquote>`; continue; }
+
+    const li = raw.match(/^[-*]\s+(.*)/);
+    if(li){ flushPara(); inList = true; listBuf.push(esc(li[1])); continue; }
+
+    if(raw.trim() === ''){ flushPara(); flushList(); continue; }
+
+    flushList();
+    para.push(raw.trim());
+  }
+  flushPara(); flushList();
+  return html;
+}
+
+function openReader(item){
+  const reader = document.getElementById('reader');
+  const contentEl = document.getElementById('reader-content');
+  document.getElementById('reader-title').textContent = item.title;
+  document.getElementById('reader-date').textContent = item.date;
+  contentEl.innerHTML = '<p class="r-error">Loading…</p>';
+  reader.classList.add('open');
+
+  const fetchable = toFetchable(item.link);
+  if(!fetchable){
+    contentEl.innerHTML = `<div class="r-error"><strong>Can't resolve this path.</strong><br>Browsers can't expand "~" — edit the WRITINGS entry to use the full path instead, e.g. /Users/you/Documents/folio/writings/post.md</div>`;
+    return;
+  }
+  fetch(fetchable)
+    .then(r => { if(!r.ok) throw new Error(r.status); return r.text(); })
+    .then(text => { contentEl.innerHTML = renderMarkdown(text, baseDirOf(fetchable)); })
+    .catch(() => {
+      contentEl.innerHTML = `<div class="r-error"><strong>Couldn't load this file.</strong><br>
+        A few likely reasons: this site is being viewed over http(s) (e.g. GitHub Pages) rather than
+        opened directly from disk — local file paths only work when you open index.html straight
+        from your computer; your browser blocks reading local files this way by default (this is
+        stricter in Chrome than Firefox); or the path is wrong. Path tried: <code>${fetchable}</code></div>`;
+    });
+}
+function closeReader(){ document.getElementById('reader').classList.remove('open'); }
+document.querySelector('[data-reader-close]').addEventListener('click', closeReader);
 </script>
 </body>
 </html>

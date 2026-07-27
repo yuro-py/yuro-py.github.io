@@ -35,23 +35,54 @@ html, body{
 }
 a{ color: inherit; }
 
-/* wallpaper — scrim is a left-to-right gradient on desktop
-   (dark where the text sits, clear on the right so the image
-   actually shows), top-to-bottom on mobile. Filled in by JS
-   from the WALLPAPERS list below, not hardcoded here. */
+/* wallpaper — a real <img>, not a CSS background, on purpose:
+   background-image fails completely silently on a bad path, an
+   <img> can tell you exactly what went wrong (see #wallpaper-diag
+   below). Scrim is left-to-right on desktop (dark where the text
+   sits, clear on the right so the image shows), top-to-bottom on
+   mobile. Filename(s) come from the WALLPAPERS list further down. */
 .wallpaper{
   position: fixed; inset: 0;
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  width: 100%; height: 100%;
+  object-fit: cover;
   z-index: -3;
-  transition: background-image .6s ease;
+  animation: breathe 42s ease-in-out infinite;
 }
+@keyframes breathe{ 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.025); } }
 .wallpaper-scrim{
   position: fixed; inset: 0;
   z-index: -2;
   background: linear-gradient(90deg, rgba(3,3,3,.90) 0%, rgba(3,3,3,.78) 32%, rgba(3,3,3,.35) 62%, rgba(3,3,3,.12) 100%);
 }
+/* quiet vignette — edges recede, center holds */
+.vignette{
+  position: fixed; inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  box-shadow: inset 0 0 18vw 2vw rgba(0,0,0,.55);
+}
+/* faint grain — barely-there texture so the void doesn't look flat */
+.grain{
+  position: fixed; inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: .035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* only ever visible if a wallpaper actually fails to load */
+#wallpaper-diag{
+  display: none;
+  position: fixed; left: 1.2rem; bottom: 1.2rem; z-index: 30;
+  max-width: 340px;
+  font-size: .68rem; line-height: 1.6; letter-spacing: .02em;
+  color: var(--ash-dim);
+  background: rgba(4,4,4,.92);
+  border: 1px solid var(--ember);
+  padding: .9em 1.1em;
+}
+#wallpaper-diag strong{ color: var(--ember-bright); }
+#wallpaper-diag code{ color: var(--ash); }
 
 /* shared button/link language — quiet iron hairline, ember on hover */
 .btn{
@@ -74,7 +105,7 @@ a{ color: inherit; }
   width: 100%;
   transition: color .2s ease, border-color .2s ease, padding-left .2s ease;
 }
-.btn:hover, .btn:focus-visible{ color: var(--ember-bright); border-color: var(--ember); padding-left: .4em; }
+.btn:hover, .btn:focus-visible{ color: var(--ember-bright); border-color: var(--ember); padding-left: .4em; text-shadow: 0 0 12px rgba(166,48,43,.35); }
 .btn:focus-visible{ outline: 1px solid var(--ember-bright); outline-offset: 4px; }
 .btn .arrow{ opacity: 0; transition: opacity .2s ease; font-size: .9em; }
 .btn:hover .arrow, .btn:focus-visible .arrow{ opacity: 1; }
@@ -85,7 +116,7 @@ a{ color: inherit; }
   display: flex; align-items: center;
   padding: 6vh 7vw;
 }
-.left-col{ max-width: 400px; width: 100%; }
+.left-col{ max-width: 400px; width: 100%; padding-left: 1.4rem; border-left: 1px solid var(--line); }
 
 .id{ margin-bottom: 3.2rem; }
 .id .name{
@@ -239,14 +270,18 @@ a{ color: inherit; }
 }
 
 @media (prefers-reduced-motion: reduce){
+  .wallpaper{ animation: none; }
   *{ transition-duration: .001ms !important; }
 }
 </style>
 </head>
 <body>
 
-<div class="wallpaper" id="wallpaper"></div>
+<img class="wallpaper" id="wallpaper" alt="">
 <div class="wallpaper-scrim"></div>
+<div class="vignette"></div>
+<div class="grain"></div>
+<div id="wallpaper-diag"></div>
 
 <main class="stage">
   <div class="left-col">
@@ -318,7 +353,9 @@ const WALLPAPERS = [
 
 // One entry per project. Empty array = the panel shows nothing.
 const PROJECTS = [
-  // { title: "PTRM: Unified Tiny Recursive Model", link: "https://github.com/yuro-py/ptrm", date: "21-7-2026" },
+  { title: "PAPER : \"Attention is all you need\" in PyTorch", link: "https://github.com/yuro-py/attention_is_all_you_need", date: "23-7-2026" },
+  { title: "\"KV cache\" in PyTorch", link: "https://github.com/yuro-py/KV-cache", date: "27-7-2026" },
+  // { title: "PAPER : \"Attention is all you need\" in PyTorch", link: "https://github.com/yuro-py/attention_is_all_you_need", date: "23-7-2026" },
 ];
 
 // One entry per writing. `link` can be either:
@@ -329,8 +366,8 @@ const PROJECTS = [
 // to be treated as local. Home-folder shortcuts like "~/..." won't
 // work — browsers can't expand "~"; use the real full path.
 const WRITINGS = [
-  { title: "a simple explanation of a transformer", link: "https://yuro-py.blogspot.com/2026/07/tf-is-transformer-transformers2007.html", date: "23-7-2026" },
-  { title: "KV-CACHE : an introduction", link: "https://yuro-py.blogspot.com/2026/07/kv-cache-introduction-models-which-are.html", date: "27-7-2026" },
+  { title: "Transformer Architecture, 2017", link: "https://yuro-py.blogspot.com/2026/07/tf-is-transformer-transformers2007.html", date: "23-7-2026" },
+  { title: "KV cache with Multi-head Attention", link: "https://yuro-py.blogspot.com/2026/07/kv-cache-introduction-models-which-are.html", date: "27-7-2026" },
   // { title: "Notes on tiny recursive models", link: "/Users/yuro/Documents/folio/writings/trm-notes.md", date: "20-7-2026" },
 ];
 
@@ -350,11 +387,26 @@ const SOCIALS = {
 
 // ---- wallpaper rotation (deterministic, not random) ----
 function pickWallpaper(){
-  const el = document.getElementById('wallpaper');
+  const img = document.getElementById('wallpaper');
+  const diag = document.getElementById('wallpaper-diag');
   if(!WALLPAPERS.length) return;
   let i = parseInt(localStorage.getItem('folio-wallpaper-idx') || '0', 10);
   if(isNaN(i) || i < 0 || i >= WALLPAPERS.length) i = 0;
-  el.style.backgroundImage = `url('assets/images/${WALLPAPERS[i]}')`;
+  const name = WALLPAPERS[i];
+  const path = `assets/images/${name}`;
+
+  img.onload = () => { diag.style.display = 'none'; };
+  img.onerror = () => {
+    diag.style.display = 'block';
+    diag.innerHTML = `<strong>Wallpaper didn't load.</strong><br>
+      Tried: <code>${path}</code><br>
+      Check: the filename in <code>WALLPAPERS</code> matches the real
+      file exactly, including case and extension — and that this
+      folder actually contains <code>assets/images/${name}</code>
+      relative to index.html.`;
+    console.warn('[folio] wallpaper failed to load:', path);
+  };
+  img.src = path;
   localStorage.setItem('folio-wallpaper-idx', (i + 1) % WALLPAPERS.length);
 }
 pickWallpaper();
@@ -423,6 +475,7 @@ function renderSocials(){
     ['x', 'Twitter / X', SOCIALS.twitter],
     ['linkedin', 'LinkedIn', SOCIALS.linkedin],
     ['huggingface', 'HuggingFace', SOCIALS.huggingface],
+    ['blogger', 'Blogger', SOCIALS.blogger],
     ['email', 'Email', SOCIALS.email ? 'mailto:' + SOCIALS.email : null],
   ];
   order.forEach(([key, label, href]) => {
