@@ -163,8 +163,7 @@
       position: fixed;
       inset: 0;
       z-index: 10;
-      background: #0d0d0ceb;
-      backdrop-filter: blur(4px);
+      background: var(--p);
       overflow-y: auto;
       display: none;
     }
@@ -175,29 +174,46 @@
 
     .reader {
       position: relative;
-      max-width: 760px;
-      margin: 8vh auto;
-      padding: 5vh 6vw;
+      width: 75vw;
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 5vh 7vw 10vh;
       background: var(--p);
-      border: 1px solid var(--l);
+      border-left: 1px solid var(--l);
+      border-right: 1px solid var(--l);
     }
 
     .reader-close {
-      position: absolute;
-      top: 14px;
-      right: 16px;
-      background: none;
+      display: inline-flex;
+      align-items: center;
+      margin: 0 0 2.5rem;
+      background: #ffffff05;
       border: 1px solid var(--l);
-      color: var(--m);
+      color: var(--i);
       font: inherit;
-      font-size: 12px;
-      padding: 4px 10px;
+      font-size: 15px;
+      padding: 12px 18px;
       cursor: pointer;
+      transition: color .15s, border-color .15s, background .15s;
     }
 
     .reader-close:hover {
       color: var(--a);
       border-color: var(--a);
+      animation: back-blink .7s steps(1, end) infinite;
+    }
+
+    .reader-close:focus-visible {
+      outline: 2px solid var(--a);
+      outline-offset: 3px;
+    }
+
+    @keyframes back-blink {
+      50% { opacity: .38; background: #ff6b4a18; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reader-close:hover { animation: none; }
     }
 
     .reader-meta {
@@ -312,9 +328,14 @@
       }
 
       .reader {
-        margin: 4vh auto;
-        padding: 8vh 6vw 6vh;
+        width: 100%;
+        min-height: 100vh;
+        margin: 0;
+        padding: 7vh 7vw 10vh;
+        border: 0;
       }
+
+      .reader-close { margin-bottom: 2rem; }
     }
   </style>
 </head>
@@ -352,21 +373,19 @@
   <!-- blog reader -->
   <div class="overlay" id="overlay" aria-hidden="true">
     <article class="reader" role="dialog" aria-modal="true" aria-labelledby="reader-title">
-      <button class="reader-close" id="reader-close" aria-label="Close">esc ✕</button>
+      <button class="reader-close" id="reader-close" aria-label="Back to index">← Back to index</button>
       <div class="reader-meta" id="reader-meta"></div>
       <h1 id="reader-title"></h1>
       <div class="prose" id="reader-body"></div>
     </article>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
 
   <script>
-    // ------------------------------------------------------------
-    // EXTERNAL — projects that link out. Shown with an arrow.
-    // ------------------------------------------------------------
-    const EXTERNAL = [
+    // Add a URL or Markdown filename here for every new portfolio item.
+    const CATALOG = [
       {
         title: 'Inference Gateway',
         date: '28-10-2026',
@@ -374,9 +393,17 @@
         link: 'https://github.com/yuro-py/inference-gateway'
       },
       {
+        file: 'serving-agentic-workload-on-rtx-5090-with-qwen3-8-27B.md',
+        title: 'Agentic Workload on a single RTX 5090 with Qwen3.8-27B : a read',
+        date: '2026-10-30',
+        desc: 'Bottlenecks, resolutions and boosting throughput while maintaining overall average latency',
+        // Keep this fallback in sync with blogs/serving-agentic-workload-on-rtx-5090-with-qwen3-8-27B.md for file:// previews.
+        body: "Chatbots do merely request/response.\nAgentic workloads do a lot of thinking, acting, observing and looping.\n\nThere are problems in agents which chatbot-focused inference optimizations wont solve.\n\n## 1. AGENTIC BOTTLENECK\n\nAgent booking a flight is not \"request/response\", it a loop:\n\n1. think : \"I need to search for flights\" (generates tokens).\n2. act : \"calls a search api\" (gpu is idle waiting for network).\n3. observe : reads the json result (huge input tokens added to context window).\n4. think : \"ok I pick the easiest one\" (generates tokens again).\n\nAgents adds massive context (scraped web page or api logs) which raises two issues:\n\n- **prefill spikes** -> it has to process that huge observation after acting, which takes a lot of compute and stalls other requests.\n- **kv cache explosion** -> every newly generated token has to be stored in immediate vram in kv pairs. 10 concurrent agents doing this will fill up vram fast, forcing \"premptionmode.recompute\" or slowing everything down.\n\n### MEMORY BANDWIDTH\n\nMEMORY BANDWIDTH is the first biggest wall which agentic workload faces cuz of massive kv cache.\n\n> 50 concurrent users X 8k context = 400K tokens = ~16gb allocated even before the weights have been loaded.\n\n## 2. NVFP4 on BLACKWELL\n\nRTX 5090 with NVFP4 solves memory bandwidth overload on agentic workloads.\n5090 uses blackwell architecture and supports NVFP4 which is different than standard FP4 or INT4.\n\n1. NVFP4 keeps the floating point structure but shrinks it to 4-bits.\n2. Storing kvc in nvfp4 compresses the vram required for concurrent user's contexts while still maintaining precision for complex reasoning even in 4 bits.\n3. It boosts throughput by releasing pressure on vram.\n\n## 3. PRODUCTION ARCHITECTURE to serve agents in 5090\n\n1. **prefix_caching** is non-negotiable as agentic workload incorporates a lot of reusable static tokens.\n2. **chunked_prefill** for overall latency -> receiving a massive observation for 1 user and processing it means other users get blocked.\n\n   So chunked prefill breaks the prefill into chunks and interleaves it with other request's decoding steps.\n\n   This way everyone's TTFT is slower but not paused, even one one agent is processing one user's massive load.\n3. **nvfp4 quantization** for efficient vram usage without disturbing complex reasoning work.\n\n## SERVING on an RTX 5090\n\n```bash\nvllm serve Qwen/Qwen3.8-27B \\\n    --quantization nvfp4 \\\n    --dtype bfloat16 \\\n    --enable-prefix-caching \\\n    --enable-chunked-prefix \\\n    --max-model-len 32768 \\\n    --gpu-memory-utilization 0.9 \\\n    --max-num-seqs 256 \\\n    --tensor-parallel-size 1\n```\n\nWith speculative decoding:\n\n```bash\n    --speculative-model Qwen/Qwen3-0.6B \\\n    --num-speculative-tokens 5 \\\n    --speculative-dtype bfloat16\n```\n"
+      },
+      {
         title: 'Paged Attention',
         date: '23-9-2026',
-        desc: 'vLLM\'s Paged Attention, implemented in PyTorch',
+        desc: "vLLM's Paged Attention, implemented in PyTorch",
         link: 'https://github.com/yuro-py/paged_attention'
       },
       {
@@ -445,25 +472,20 @@
         desc: 'Wrote my first mini blog on TRM, 2 layer network for recursive reasoning and solving grid-based tasks',
         link: 'https://raw.githubusercontent.com/yuro-py/yuro-py.github.io/refs/heads/main/first_blogs/28_march_tiny_recursive_model.md'
       },
+      {
+        file: 'hello-world.md',
+        title: 'Hello World',
+        date: '2026-10-30',
+        desc: 'A quick welcome to the portfolio blog and a place for new notes.',
+        // Keep this fallback in sync with blogs/hello-world.md for file:// previews.
+        body: '# Hello World\n\nThis is the first post on my in-app blog. I’ll use this space for notes and write-ups from my work.'
+      }
     ];
 
-    // ------------------------------------------------------------
-    // BLOGS — markdown files inside ./blogs/
-    //
-    // Each file looks like:
-    //   ---
-    //   title: My Post
-    //   date: 2026-10-20
-    //   description: One line summary
-    //   ---
-    //   # Body in markdown...
-    //
-    // The page finds them by reading the blogs/ directory listing.
-    // If your host doesn't show directory listings (e.g. GitHub Pages),
-    // list the filenames in blogs/manifest.json instead: ["my-post.md", ...]
-    // ------------------------------------------------------------
     const BLOG_DIR = 'blogs/';
-    const MANIFEST = 'blogs/manifest.json';
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.marked) marked.setOptions({ gfm: true });
+    });
 
     const list = document.querySelector('#list');
     const overlay = document.querySelector('#overlay');
@@ -473,6 +495,9 @@
     const readerClose = document.querySelector('#reader-close');
 
     let blogs = [];
+    let blogFiles = [];
+    let external = [];
+    let localBlogDirectory = null;
 
     // ---------- helpers ----------
     const esc = s => String(s ?? '')
@@ -503,61 +528,169 @@
       return { meta, body: text.slice(m[0].length) };
     }
 
-    // ---------- discovery ----------
-    async function listBlogFiles() {
-      // 1) directory listing (python -m http.server, nginx autoindex, etc.)
-      try {
-        const res = await fetch(BLOG_DIR, { cache: 'no-store' });
-        if (res.ok) {
-          const html = await res.text();
-          const doc = new DOMParser().parseFromString(html, 'text/html');
-          const names = [...doc.querySelectorAll('a')]
-            .map(a => a.getAttribute('href') || '')
-            .filter(h => /\.md$/i.test(h) && !h.includes('/'))
-            .map(h => decodeURIComponent(h));
-          if (names.length) return [...new Set(names)];
-        }
-      } catch (_) {}
-
-      // 2) manifest fallback
-      try {
-        const res = await fetch(MANIFEST, { cache: 'no-store' });
-        if (res.ok) {
-          const names = await res.json();
-          return names.filter(n => /\.md$/i.test(n));
-        }
-      } catch (_) {}
-
-      return [];
+    function blogSlug(file) {
+      return file.replace(/^blogs\//i, '').replace(/\.md$/i, '');
     }
 
-    async function loadBlog(file) {
-      const res = await fetch(BLOG_DIR + encodeURIComponent(file), { cache: 'no-store' });
-      if (!res.ok) throw new Error(`${file}: ${res.status}`);
-      const { meta, body } = parseFrontmatter(await res.text());
-      const slug = file.replace(/\.md$/i, '');
+    function blogStub(file) {
+      const slug = blogSlug(file);
+      const details = CATALOG.find(entry => entry && typeof entry === 'object' &&
+        (entry.file || entry.blog) && (entry.file || entry.blog).replace(/^blogs\//i, '') === file.replace(/^blogs\//i, '')) || {};
       return {
         type: 'blog',
         slug,
-        title: meta.title || slug.replace(/[-_]+/g, ' '),
-        date: meta.date || '',
-        desc: meta.description || '',
-        body
+        file: file.replace(/^blogs\//i, ''),
+        title: details.title || slug.replace(/[-_]+/g, ' ').replace(/\b\w/g, char => char.toUpperCase()),
+        date: details.date || '',
+        desc: details.desc || details.description || '',
+        body: typeof details.body === 'string' ? details.body : '',
+        loaded: typeof details.body === 'string'
       };
     }
 
-    async function loadBlogs() {
-      const files = await listBlogFiles();
-      const results = await Promise.allSettled(files.map(loadBlog));
+    function parseBlog(file, text) {
+      const { meta, body } = parseFrontmatter(text);
+      const slug = blogSlug(file);
+      return {
+        type: 'blog',
+        slug,
+        file: file.replace(/^blogs\//i, ''),
+        title: meta.title || slug.replace(/[-_]+/g, ' '),
+        date: meta.date || '',
+        desc: meta.description || '',
+        body,
+        loaded: true
+      };
+    }
+
+    async function loadLocalBlog(file) {
+      if (!localBlogDirectory) throw new Error('No saved local blog access is available.');
+      let permission = await localBlogDirectory.queryPermission({ mode: 'read' });
+      if (permission !== 'granted' && localBlogDirectory.requestPermission) {
+        permission = await localBlogDirectory.requestPermission({ mode: 'read' });
+      }
+      if (permission !== 'granted') throw new Error('The browser needs permission to read the blogs folder.');
+      const handle = await localBlogDirectory.getFileHandle(file.replace(/^blogs\//i, ''));
+      return (await handle.getFile()).text();
+    }
+
+    async function loadBlog(file) {
+      file = file.replace(/^blogs\//i, '');
+      if (!/^[^/\\]+\.md$/i.test(file)) throw new Error(`Invalid blog filename: ${file}`);
+      let text;
+      if (location.protocol === 'file:') {
+        text = await loadLocalBlog(file);
+      } else {
+        const res = await fetch(BLOG_DIR + encodeURIComponent(file), { cache: 'no-store' });
+        if (!res.ok) throw new Error(`${file}: ${res.status}`);
+        text = await res.text();
+      }
+      return parseBlog(file, text);
+    }
+
+    function externalTitle(href) {
+      const url = new URL(href);
+      const part = url.pathname.split('/').filter(Boolean).pop();
+      const label = (part || url.hostname.replace(/^www\./, '')).replace(/\.git$/i, '');
+      return label.replace(/[-_]+/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+    }
+
+    function makeExternal(href, details = {}) {
+      if (typeof href !== 'string' || !href.trim()) return null;
+      const value = href.trim();
+      const withProtocol = /^https?:\/\//i.test(value) ? value : `https://${value}`;
+      try {
+        const url = new URL(withProtocol);
+        if (!['http:', 'https:'].includes(url.protocol)) return null;
+        return {
+          type: 'external',
+          link: url.href,
+          title: details.title || externalTitle(url.href),
+          date: details.date || '',
+          desc: details.desc || details.description || ''
+        };
+      } catch (_) {
+        return null;
+      }
+    }
+
+    async function loadPortfolio() {
+      const files = [];
+      external = [];
+      CATALOG.forEach(entry => {
+        if (typeof entry === 'string') {
+          const value = entry.trim();
+          if (!/^https?:\/\//i.test(value) && /\.md$/i.test(value)) files.push(value);
+          else {
+            const link = makeExternal(value);
+            if (link) external.push(link);
+          }
+          return;
+        }
+
+        if (!entry || typeof entry !== 'object') return;
+        const file = entry.file || entry.blog;
+        if (typeof file === 'string') files.push(file);
+        else {
+          const link = makeExternal(entry.link || entry.url, entry);
+          if (link) external.push(link);
+        }
+      });
+
+      blogFiles = [...new Set(files)];
+      if (location.protocol === 'file:') {
+        blogs = blogFiles.map(blogStub);
+        await restoreLocalBlogDirectory();
+        if (localBlogDirectory) await refreshLocalBlogs();
+        return;
+      }
+
+      const results = await Promise.allSettled(blogFiles.map(loadBlog));
       results.forEach(r => {
         if (r.status === 'rejected') console.warn('Blog skipped:', r.reason);
       });
-      return results.filter(r => r.status === 'fulfilled').map(r => r.value);
+      const loadedBySlug = new Map(results
+        .filter(r => r.status === 'fulfilled')
+        .map(r => [r.value.slug, r.value]));
+      blogs = blogFiles.map(file => loadedBySlug.get(blogSlug(file)) || blogStub(file));
+    }
+
+    function openHandleDatabase() {
+      return new Promise((resolve, reject) => {
+        if (!window.indexedDB) return reject(new Error('IndexedDB unavailable'));
+        const request = indexedDB.open('folio-blog-reader', 1);
+        request.onupgradeneeded = () => request.result.createObjectStore('handles');
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    async function restoreLocalBlogDirectory() {
+      try {
+        const db = await openHandleDatabase();
+        const handle = await new Promise((resolve, reject) => {
+          const request = db.transaction('handles').objectStore('handles').get('blogs');
+          request.onsuccess = () => resolve(request.result || null);
+          request.onerror = () => reject(request.error);
+        });
+        db.close();
+        localBlogDirectory = handle;
+      } catch (_) {
+        localBlogDirectory = null;
+      }
+    }
+
+    async function refreshLocalBlogs() {
+      const results = await Promise.allSettled(blogFiles.map(loadBlog));
+      const loadedBySlug = new Map(results
+        .filter(r => r.status === 'fulfilled')
+        .map(r => [r.value.slug, r.value]));
+      blogs = blogFiles.map(file => loadedBySlug.get(blogSlug(file)) || blogStub(file));
     }
 
     // ---------- rendering ----------
     function renderList() {
-      const items = [...EXTERNAL.map(e => ({ ...e, type: 'external' })), ...blogs]
+      const items = [...external, ...blogs]
         .sort((a, b) => toTime(b.date) - toTime(a.date));
 
       list.innerHTML = items.map(s => {
@@ -577,17 +710,57 @@
     }
 
     // ---------- reader ----------
-    function openBlog(slug) {
-      const b = blogs.find(x => x.slug === slug);
-      if (!b) return;
-      readerMeta.textContent = b.date;
-      readerTitle.textContent = b.title;
-      readerBody.innerHTML = DOMPurify.sanitize(marked.parse(b.body));
+    function showReader() {
       overlay.classList.add('open');
       overlay.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
       overlay.scrollTop = 0;
       readerClose.focus();
+    }
+
+    function showLocalBlogError(blog) {
+      readerMeta.textContent = blog.date;
+      readerTitle.textContent = blog.title;
+      readerBody.replaceChildren();
+
+      const message = document.createElement('p');
+      message.textContent = 'The browser has no saved read access to this local Markdown file. Open the portfolio through a local web server to read in-app blogs.';
+      readerBody.append(message);
+
+      const hint = document.createElement('p');
+      hint.textContent = 'From the folio folder, run: python3 -m http.server 8000 — then open http://localhost:8000.';
+      readerBody.append(hint);
+
+      showReader();
+    }
+
+    async function openBlog(slug) {
+      const b = blogs.find(x => x.slug === slug);
+      if (!b) return;
+      if (location.protocol === 'file:' && !localBlogDirectory) await restoreLocalBlogDirectory();
+      if (!b.loaded) {
+        try {
+          Object.assign(b, await loadBlog(b.file));
+        } catch (error) {
+          if (location.protocol === 'file:') {
+            showLocalBlogError(b);
+            return;
+          }
+          readerMeta.textContent = b.date;
+          readerTitle.textContent = b.title;
+          readerBody.textContent = `Could not load ${b.file}. Check that the file exists in blogs/.`;
+          showReader();
+          return;
+        }
+      }
+      readerMeta.textContent = b.date;
+      readerTitle.textContent = b.title;
+      if (window.marked && window.DOMPurify) {
+        readerBody.innerHTML = DOMPurify.sanitize(marked.parse(b.body));
+      } else {
+        readerBody.textContent = b.body;
+      }
+      showReader();
     }
 
     function closeBlog() {
@@ -603,17 +776,37 @@
       else closeBlog();
     }
 
+    list.addEventListener('click', event => {
+      const link = event.target.closest('a[data-type="blog"]');
+      if (!link || location.protocol !== 'file:' || !localBlogDirectory || !localBlogDirectory.requestPermission) return;
+      const targetSlug = decodeURIComponent((link.getAttribute('href') || '').replace(/^#blog\//, ''));
+      const targetBlog = blogs.find(item => item.slug === targetSlug);
+      if (!targetBlog || targetBlog.loaded) return;
+
+      event.preventDefault();
+      localBlogDirectory.requestPermission({ mode: 'read' }).then(async permission => {
+        if (permission !== 'granted') throw new Error('Blog folder access was not granted.');
+        await refreshLocalBlogs();
+        renderList();
+        if (location.hash === link.getAttribute('href')) await openBlog(targetBlog.slug);
+        else location.hash = link.getAttribute('href');
+      }).catch(() => showLocalBlogError(targetBlog));
+    });
+
     readerClose.addEventListener('click', () => { location.hash = ''; });
     overlay.addEventListener('click', e => { if (e.target === overlay) location.hash = ''; });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') location.hash = ''; });
     window.addEventListener('hashchange', route);
 
     // ---------- boot ----------
-    renderList(); // external items show immediately
-    loadBlogs().then(found => {
-      blogs = found;
+    const portfolioReady = loadPortfolio();
+    renderList();
+    portfolioReady.then(() => {
       renderList();
       route();
+    }).catch(error => {
+      console.error('Could not load portfolio:', error);
+      renderList();
     });
   </script>
 </body>
