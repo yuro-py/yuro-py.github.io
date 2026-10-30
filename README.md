@@ -1,12 +1,26 @@
 # Portfolio
 
-The work list lives in the `CATALOG` array near the top of the script in `index.html`. Add either a bare URL string or a Markdown filename string:
+Edit the `CATALOG` array in `index.html` to change the work list.
+
+## Add a link or repository
+
+Add an entry with a title, date, short description, and URL:
 
 ```js
-'https://example.com/project',
-'my-new-post.md'
+{
+  title: 'Project name',
+  date: '30-10-2026',
+  desc: 'Short summary',
+  link: 'https://github.com/your-name/project'
+}
 ```
 
-Put blog files in `blogs/`. The page reads each blog's `title`, `date`, and `description` from its frontmatter and renders the body as GitHub-flavored Markdown. A bare external URL gets its title from the last part of the URL. Use an object with `title`, `date`, `desc`, and `link` when you want a custom label and summary; the existing entries use that format.
+## Add an in-app blog
 
-When opening `index.html` directly as `file://`, the work list appears immediately. `hello-world.md` and `serving-agentic-workload-on-rtx-5090-with-qwen3-8-27B.md` have inline preview fallbacks in the catalog. For other blogs, open the portfolio through a local web server so the browser can load Markdown files: run `python3 -m http.server 8000` from this folder and visit `http://localhost:8000`. Browsers do not let a local page silently read neighboring Markdown files.
+1. Create a `.md` file in `blogs/` with `title`, `date`, and `description` frontmatter.
+2. Add a catalog entry with `file`, `title`, `date`, and `desc`.
+3. To show the post when `index.html` is opened directly as `file://`, add its Markdown body as the entry's `body` string and keep it in sync with the `.md` file. Otherwise, run `python3 -m http.server 8000` in this folder and open `http://localhost:8000`.
+
+## Remove content
+
+Delete the matching entry from `CATALOG`. For an in-app blog, also delete its `.md` file from `blogs/` if it is no longer needed. For a link or repository, remove its catalog entry.

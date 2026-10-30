@@ -1,6 +1,6 @@
 ---
 title: Agentic Workload on a single RTX 5090 with Qwen3.8-27B : a read
-date: 2026-10-30
+date: 30-10-2026
 description: Bottlenecks, resolutions and boosting throughput while maintaining overall average latency
 ---
 
