@@ -55,7 +55,7 @@ vllm serve Qwen/Qwen3.8-27B \
     --quantization nvfp4 \
     --dtype bfloat16 \
     --enable-prefix-caching \
-    --enable-chunked-prefix \
+    --enable-chunked-prefill \
     --max-model-len 32768 \
     --gpu-memory-utilization 0.9 \
     --max-num-seqs 256 \
